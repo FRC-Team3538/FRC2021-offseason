@@ -11,7 +11,7 @@ void Shooter::SetFeeder(double speed)
     feeder._Set(speed);
 }
 
-void Shooter::SetTurretAngle(units::degrees_t targetAngle)
+void Shooter::SetTurretAngle(units::degree_t targetAngle)
 {
     targetAngle = std::min(targetAngle, maxTurretAngle);
     targetTurretAngle = std::max(targetAngle, minTurretAngle);
@@ -26,15 +26,15 @@ void Shooter::SetHood(double speed)
 {
 }
 
-void Shooter::SetHoodAngle(units::degrees_t targetAngle)
+void Shooter::SetHoodAngle(units::degree_t targetAngle)
 {
     targetAngle = std::min(targetAngle, maxHoodAngle);
     targetHoodAngle = std::max(targetAngle, minHoodAngle);
 }
 
-units::degrees_t Shooter::GetHoodAngle()
+units::degree_t Shooter::GetHoodAngle()
 {
-    double ang = -hoodEncAbs.GetDistance() + offset;
+    double ang = -hoodEncAbs.GetDistance();// + offset;
     if (ang < 0 || ang > 120)
     {
         ang = fmod(ang, 144.0);
@@ -43,12 +43,12 @@ units::degrees_t Shooter::GetHoodAngle()
     {
         ang += 144.0;
     }
-    return (ang);
+    return units::degree_t(ang);
 }
 
-units::degrees_t Shooter::GetTurretAngle()
+units::degree_t Shooter::GetTurretAngle()
 {
-    double ang = -hoodEncAbs.GetDistance() + offset;
+    double ang = -hoodEncAbs.GetDistance();// + offset;
     if (ang < 0 || ang > 120)
     {
         ang = fmod(ang, 144.0);
@@ -57,7 +57,7 @@ units::degrees_t Shooter::GetTurretAngle()
     {
         ang += 144.0;
     }
-    return (ang);
+    return units::degree_t(ang);
 }
 
 units::revolutions_per_minute_t Shooter::GetShooterVelocity()

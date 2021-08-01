@@ -18,11 +18,54 @@
 #include <frc/Preferences.h>
 #include <string.h>
 #include <frc/DutyCycleEncoder.h>
+#include <frc/controller/ProfiledPIDController.h>
+#include <frc/controller/SimpleMotorFeedforward.h>
+
+struct SwerveModuleDrivePIDConfig
+{
+    const double kP;
+    const double kI;
+    const double kD;
+    const units::meters_per_second_squared_t max_acceleration;
+    const decltype(1_mps_sq / 1_s) max_jerk;
+};
+
+struct SwerveModuleDriveFFConfig
+{
+    const units::volt_t kS;
+    const decltype(1_V / 1_mps) kV;
+    const decltype(1_V / 1_mps_sq) kA;
+};
+
+struct SwerveModuleTurnPIDConfig
+{
+    const double kP;
+    const double kI;
+    const double kD;
+    const units::radians_per_second_t max_angular_velocity;
+    const units::radians_per_second_squared_t max_angular_acceleration;
+};
+
+struct SwerveModuleTurnFFConfig
+{
+    const units::volt_t kS;
+    const decltype(1_V / 1_rad_per_s) kV;
+    const decltype(1_V / 1_rad_per_s_sq) kA;
+};
+
+struct SwerveModuleConfig
+{
+    const units::degree_t angleOffset;
+    const SwerveModuleDrivePIDConfig drivePID;
+    const SwerveModuleTurnPIDConfig turningPID;
+    const SwerveModuleDriveFFConfig driveFf;
+    const SwerveModuleTurnFFConfig turnFf;
+};
 
 class SwerveModule : public Subsystem
 {
 public:
-    SwerveModule(std::string moduleID, int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel);
+    SwerveModule(std::string moduleID, int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel, SwerveModuleConfig config);
 
     // Init Stuff
     void ConfigureMotors();
@@ -56,6 +99,13 @@ private:
 
     static constexpr auto kDriveMotorCurrentLimit = 55_A;
     static constexpr auto kTurningMotorCurrentLimit = 30_A;
+
+    // Control
+    frc::ProfiledPIDController<units::meters_per_second> m_drivePIDController;
+    frc::ProfiledPIDController<units::radians> m_turningPIDController;
+
+    frc::SimpleMotorFeedforward<units::meters> m_driveFeedforward;
+    frc::SimpleMotorFeedforward<units::radians> m_turnFeedforward;
 
     // Preferences
     frc::Preferences *prefs = frc::Preferences::GetInstance();

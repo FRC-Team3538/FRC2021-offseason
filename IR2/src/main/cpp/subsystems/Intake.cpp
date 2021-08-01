@@ -8,8 +8,10 @@
  */
 Intake::State &Intake::State::operator=(State const &param)
 {
+
     this->position = param.position;
     this->speed = param.speed;
+    return *this;
 }
 
 Intake::Intake()
@@ -69,7 +71,7 @@ void Intake::SetState(State state)
 
     // If inputed intake position isn't valid, default the intake to stowed
     default:
-        SetState(State newState{state.speed, Position::Stowed});
+        SetState({state.speed, Position::Stowed});
     }
 }
 
