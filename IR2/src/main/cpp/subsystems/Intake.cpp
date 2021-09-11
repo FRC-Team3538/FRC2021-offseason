@@ -38,8 +38,7 @@ void Intake::SetState(State state)
 
     case Position::Stowed:
     {
-        backPiston.Set(false);
-        linkagePiston.Set(false);
+        deployPiston.Set(false);
 
         // Set speed of intake motor
         IntakeMotor._Set(0.0);
@@ -47,21 +46,9 @@ void Intake::SetState(State state)
         break;
     }
 
-    case Position::HumanPlayer:
-    {
-        backPiston.Set(true);
-        linkagePiston.Set(true);
-
-        // Set speed of intake motor
-        IntakeMotor._Set(state.speed);
-
-        break;
-    }
-
     case Position::Deployed:
     {
-        backPiston.Set(true);
-        linkagePiston.Set(false);
+        deployPiston.Set(true);
 
         // Set speed of intake motor
         IntakeMotor._Set(state.speed);
@@ -71,7 +58,7 @@ void Intake::SetState(State state)
 
     // If inputed intake position isn't valid, default the intake to stowed
     default:
-        SetState({state.speed, Position::Stowed});
+        SetState({0.0, Position::Stowed});
     }
 }
 

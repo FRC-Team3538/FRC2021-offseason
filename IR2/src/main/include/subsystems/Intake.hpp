@@ -11,10 +11,9 @@ class Intake : public Subsystem
 {
 public:
     // Data Struct
-    enum Position
+    enum class Position:uint8_t
     {
         Stowed = 0,
-        HumanPlayer,
         Deployed
     };
 
@@ -49,6 +48,5 @@ private:
 
     LazyTalonFX IntakeMotor{8};
 
-    frc::Solenoid backPiston{0};
-    frc::Solenoid linkagePiston{1};
+    frc::Solenoid deployPiston{0};
 };

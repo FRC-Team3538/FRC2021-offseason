@@ -1,5 +1,12 @@
 #pragma once
 
+
+/**
+ * Subsystem Interface
+ * 
+ * Has UpdateTelemetry() and ConfigureMotors() functions
+ * Just trying this out because it seems convenient
+ */
 class Subsystem
 {
 protected:

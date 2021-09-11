@@ -66,6 +66,7 @@ class SwerveModule : public Subsystem
 {
 public:
     SwerveModule(std::string moduleID, int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel, SwerveModuleConfig config);
+    SwerveModule() = delete; // Removes default constructor because why tf u using the default constructor, my G. SMH
 
     // Init Stuff
     void ConfigureMotors();
