@@ -32,7 +32,7 @@ public:
     void Drive(frc::Trajectory::State trajectoryState, units::radian_t yaw = 0_rad);
     void ResetYaw();
     void ResetOdometry(const frc::Pose2d &pose);
-    void ShowTrajectory(const frc::Trajectory &trajectory);
+    void UpdateOdometry();
 
     // Getters
     frc::Rotation2d GetYaw();
@@ -56,6 +56,9 @@ private:
         frc::ADIS16470_IMU::IMUAxis::kZ,
         frc::SPI::Port::kOnboardCS0,
         frc::ADIS16470CalibrationTime::_1s};
+
+    // Odomoetry
+    frc::Field2d m_fieldDisplay;
 
     // Control
     frc::ChassisSpeeds m_command;

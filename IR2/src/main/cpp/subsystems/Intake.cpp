@@ -6,13 +6,6 @@
  * @param param Sets the object's value to param
  * @return 
  */
-Intake::State &Intake::State::operator=(State const &param)
-{
-
-    this->position = param.position;
-    this->speed = param.speed;
-    return *this;
-}
 
 Intake::Intake()
 {
@@ -33,51 +26,55 @@ void Intake::ConfigureMotors()
  * 
  * @param state Desired state of the intake (Type IntakeNS::State)
  */
-void Intake::SetState(State state)
+void Intake::SetPosition(Position position)
 {
-    // Min Max the intake speed
-    state.speed = state.speed > 1.0 ? 1.0 : state.speed;
-    state.speed = state.speed < -1.0 ? -1.0 : state.speed;
-
     // Update current state for the getter function
-    currentState = state;
+    currentPosition = position;
 
     // Set piston configuration based on desired state
-    switch (state.position)
+    switch (position)
     {
 
     case Position::Stowed:
     {
         deployPiston.Set(false);
-
-        // Set speed of intake motor
-        IntakeMotor._Set(0.0);
-
         break;
     }
 
     case Position::Deployed:
     {
         deployPiston.Set(true);
-
-        // Set speed of intake motor
-        IntakeMotor._Set(state.speed);
-
         break;
     }
 
     // If inputed intake position isn't valid, default the intake to stowed
     default:
-        SetState({0.0, Position::Stowed});
+        SetPosition(Position::Stowed);
     }
 }
 
-/**
- * Returns the current state of the intake
- * 
- * @return IntakeNS::State currentState
- */
-Intake::State Intake::GetState()
+void Intake::SetSpeed(double speed)
 {
-    return currentState;
+    // Min Max the intake speed
+    speed = speed > 1.0 ? 1.0 : speed;
+    speed = speed < -1.0 ? -1.0 : speed;
+
+    currentSpeed = speed;
+
+    intakeMotor._Set(speed);
+}
+
+/**
+ * Returns the current position of the intake
+ * 
+ * @return IntakeNS::Position currentPosition
+ */
+Intake::Position Intake::GetPosition()
+{
+    return currentPosition;
+}
+
+double Intake::GetSpeed()
+{
+    return currentSpeed;
 }

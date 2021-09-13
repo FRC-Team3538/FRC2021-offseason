@@ -17,17 +17,6 @@ public:
         Deployed
     };
 
-    struct State
-    {
-        double speed;
-        Position position;
-
-        State();
-        State(double speed, Position position) : speed(speed), position(position) {}
-
-        State &operator=(State const &param);
-    };
-
     // Constructor
     Intake();
 
@@ -38,15 +27,18 @@ public:
     void UpdateTelemetry();
 
     // Setters
-    void SetState(State state);
+    void SetPosition(Position position);
+    void SetSpeed(double speed);
 
     // Getters
-    State GetState();
+    Position GetPosition();
+    double GetSpeed();
 
 private:
-    State currentState{0.0, Position::Stowed};
+    double currentSpeed = 0.0;
+    Position currentPosition = Position::Stowed;
 
-    LazyTalonFX IntakeMotor{8};
+    LazyTalonFX intakeMotor{8};
 
     frc::Solenoid deployPiston{0};
 };

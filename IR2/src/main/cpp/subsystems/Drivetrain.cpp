@@ -6,12 +6,10 @@ Drivetrain::Drivetrain()
 
 void Drivetrain::UpdateTelemetry()
 {
-
 }
 
 void Drivetrain::ConfigureMotors()
 {
-
 }
 
 void Drivetrain::Drive(frc::Trajectory::State trajectoryState, units::radian_t yaw)
@@ -83,4 +81,29 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
 frc::Rotation2d Drivetrain::GetYaw()
 {
   return frc::Rotation2d{units::degree_t{m_imu.GetAngle()}};
+}
+
+void Drivetrain::UpdateOdometry()
+{
+  m_odometry.Update(GetYaw(),
+                    m_frontLeft.GetState(),
+                    m_frontRight.GetState(),
+                    m_backLeft.GetState(),
+                    m_backRight.GetState());
+
+  m_poseEstimator.Update(GetYaw(),
+                         m_frontLeft.GetState(),
+                         m_frontRight.GetState(),
+                         m_backLeft.GetState(),
+                         m_backRight.GetState());
+
+  m_robotVelocity = m_kinematics.ToChassisSpeeds({m_frontLeft.GetState(),
+                                                  m_frontRight.GetState(),
+                                                  m_backLeft.GetState(),
+                                                  m_backRight.GetState()});
+}
+
+void Drivetrain::ResetYaw()
+{
+  m_imu.Reset();
 }

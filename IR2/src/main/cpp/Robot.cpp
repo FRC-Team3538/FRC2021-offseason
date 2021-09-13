@@ -13,11 +13,31 @@ void Robot::AutonomousPeriodic() {}
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic()
 {
+  // DRIVE CODE
   auto forward = Deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal) * Drivetrain::kMaxSpeedLinear;
   auto strafe = Deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal) * Drivetrain::kMaxSpeedLinear;
   auto rotate = Deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal) * Drivetrain::kMaxSpeedAngular;
 
-  IO.drivetrain.Drive(forward, strafe, rotate, true);
+  IO.drivetrain.Drive(forward, strafe, rotate, false);
+
+  // INTAKE CODE
+  double rightTrig = Deadband(m_driver.GetTriggerAxis(frc::GenericHID::kRightHand), deadbandVal);
+  double leftTrig = Deadband(m_driver.GetTriggerAxis(frc::GenericHID::kLeftHand), deadbandVal);
+
+  bool rightBump = m_driver.GetBumperPressed(frc::GenericHID::kRightHand);
+  bool leftBump = m_driver.GetBumperPressed(frc::GenericHID::kLeftHand);
+
+  if(rightBump)
+  {
+    IO.intake.SetPosition(Intake::Position::Deployed);
+  }
+
+  if(leftBump)
+  {
+    IO.intake.SetPosition(Intake::Position::Stowed);
+  }
+
+  IO.intake.SetSpeed(leftTrig - rightTrig);
 
 }
 
