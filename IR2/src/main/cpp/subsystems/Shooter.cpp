@@ -4,6 +4,16 @@ Shooter::Shooter()
 {
 }
 
+void Shooter::ConfigureMotors()
+{
+
+}
+
+void Shooter::UpdateTelemetry()
+{
+    
+}
+
 /**
  * Sets % Output of Feeder Motor
  * 

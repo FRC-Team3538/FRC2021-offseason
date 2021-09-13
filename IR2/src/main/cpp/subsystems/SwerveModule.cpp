@@ -18,6 +18,35 @@ SwerveModule::SwerveModule(std::string moduleID, int driveMotorChannel, int turn
       m_driveFeedforward{config.driveFf.kS, config.driveFf.kV, config.driveFf.kA},
       m_turnFeedforward{config.turnFf.kS, config.turnFf.kV, config.turnFf.kA}
 {
+  // Drive Motor Configuration
+  m_driveMotor.ConfigFactoryDefault();
+  m_driveMotor.SetStatusFramePeriod(ctre::phoenix::motorcontrol::StatusFrameEnhanced::Status_3_Quadrature, 18);
+  m_driveMotor.SetInverted(false); // Remember: forward-positive!
+  m_driveMotor.SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
+  m_driveMotor.ConfigSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, kDriveMotorCurrentLimit.value(), kDriveMotorCurrentLimit.value(), 0.0));
+
+  // Turning Motor Configuration
+  m_turningMotor.ConfigFactoryDefault();
+  m_turningMotor.SetStatusFramePeriod(ctre::phoenix::motorcontrol::StatusFrameEnhanced::Status_3_Quadrature, 18);
+  m_turningMotor.SetInverted(true); // Remember: forward-positive!
+  m_turningMotor.SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
+  m_turningMotor.ConfigSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, kTurningMotorCurrentLimit.value(), kTurningMotorCurrentLimit.value(), 0.0));
+
+  // Turning Encoder Config
+  ctre::phoenix::sensors::CANCoderConfiguration encoderConfig;
+  turningEncAbs.GetAllConfigs(encoderConfig);
+  encoderConfig.enableOptimizations = true;
+  encoderConfig.initializationStrategy = ctre::phoenix::sensors::SensorInitializationStrategy::BootToAbsolutePosition;
+  encoderConfig.absoluteSensorRange = ctre::phoenix::sensors::AbsoluteSensorRange::Signed_PlusMinus180;
+  encoderConfig.magnetOffsetDegrees = config.angleOffset.value();
+  encoderConfig.sensorDirection = true;
+  turningEncAbs.ConfigAllSettings(encoderConfig);
+
+  // Limit the PID Controller's input range between -pi and pi and set the input
+  // to be continuous.
+  m_turningPIDController.EnableContinuousInput(-units::radian_t(wpi::math::pi),
+                                               units::radian_t(wpi::math::pi));
+  m_turningPIDController.Reset(units::degree_t(turningEncAbs.GetAbsolutePosition()));
 }
 
 /**
@@ -49,7 +78,8 @@ units::meters_per_second_t SwerveModule::GetVelocity()
  */
 frc::Rotation2d SwerveModule::GetAngle()
 {
-  return frc::Rotation2d(units::degree_t(turningEncAbs.Get()));
+  auto un_normalized = frc::Rotation2d(units::degree_t(turningEncAbs.GetAbsolutePosition()));
+  return frc::Rotation2d(un_normalized.Cos(), un_normalized.Sin());
 }
 
 /**
@@ -87,3 +117,10 @@ void SwerveModule::SetModule(const frc::SwerveModuleState &state)
   m_turningMotor.SetVoltage(m_turnVolts);
 }
 
+void SwerveModule::ConfigureMotors()
+{
+}
+
+void SwerveModule::UpdateTelemetry()
+{
+}

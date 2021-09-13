@@ -5,6 +5,8 @@
 #pragma once
 
 #include <frc/TimedRobot.h>
+#include "lib/PS4Controller.hpp"
+#include "Robotmap.hpp"
 
 class Robot : public frc::TimedRobot {
  public:
@@ -22,4 +24,13 @@ class Robot : public frc::TimedRobot {
 
   void TestInit() override;
   void TestPeriodic() override;
+
+  private:
+    frc::PS4Controller m_driver{0};
+    frc::PS4Controller m_operator{1};
+
+    Robotmap IO;
+
+    double Deadband(double value, double deadband);
+    const double deadbandVal = 0.05;
 };

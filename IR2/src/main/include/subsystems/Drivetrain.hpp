@@ -38,11 +38,13 @@ public:
     frc::Rotation2d GetYaw();
     units::radians_per_second_t GetYawRate();
 
-    units::meters_per_second_t kMaxSpeedLinear = 16_fps;
-    units::radians_per_second_t kMaxSpeedAngular = 360_deg_per_s;
+    static constexpr units::meters_per_second_t kMaxSpeedLinear = 16_fps;
+    static constexpr units::radians_per_second_t kMaxSpeedAngular = 360_deg_per_s;
     static constexpr units::inch_t kWheelToWheel = 22_in;
 
 private:
+    bool m_fieldRelative;
+
     // Configuration
     static constexpr auto dist = kWheelToWheel / 2;
     frc::Translation2d frontLeftLocation{+dist, +dist};

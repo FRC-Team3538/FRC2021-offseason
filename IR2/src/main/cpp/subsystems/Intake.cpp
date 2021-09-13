@@ -18,6 +18,16 @@ Intake::Intake()
 {
 }
 
+void Intake::UpdateTelemetry()
+{
+
+}
+
+void Intake::ConfigureMotors()
+{
+    
+}
+
 /**
  * Sets the state of the Intake
  * 

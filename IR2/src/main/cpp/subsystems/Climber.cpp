@@ -4,6 +4,16 @@ Climber::Climber()
 {
 }
 
+void Climber::UpdateTelemetry()
+{
+
+}
+
+void Climber::ConfigureMotors()
+{
+    
+}
+
 void Climber::SetClimber(double speed)
 {
     climb._Set(speed);
