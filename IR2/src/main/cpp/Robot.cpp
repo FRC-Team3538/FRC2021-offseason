@@ -5,7 +5,11 @@
 #include "Robot.hpp"
 
 void Robot::RobotInit() {}
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic()
+{
+  //IO.vis.Periodic();
+  IO.UpdateTelemetry();
+}
 
 void Robot::AutonomousInit() {}
 void Robot::AutonomousPeriodic() {}
@@ -27,18 +31,31 @@ void Robot::TeleopPeriodic()
   bool rightBump = m_driver.GetBumperPressed(frc::GenericHID::kRightHand);
   bool leftBump = m_driver.GetBumperPressed(frc::GenericHID::kLeftHand);
 
-  if(rightBump)
+  if (rightBump)
   {
     IO.intake.SetPosition(Intake::Position::Deployed);
   }
 
-  if(leftBump)
+  if (leftBump)
   {
     IO.intake.SetPosition(Intake::Position::Stowed);
   }
 
-  IO.intake.SetSpeed(leftTrig - rightTrig);
+  IO.intake.SetSpeed(-leftTrig + rightTrig);
 
+  // SHOOTER
+
+  if (false)
+  {
+    data = IO.vis.Run();
+    if(data.filled)
+    {
+      
+    }
+  }
+  else
+  {
+  }
 }
 
 void Robot::DisabledInit() {}
