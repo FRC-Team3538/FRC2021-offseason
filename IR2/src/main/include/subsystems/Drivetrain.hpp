@@ -34,6 +34,8 @@ public:
     void ResetOdometry(const frc::Pose2d &pose);
     void UpdateOdometry();
 
+    void Test(double speed, double angle);
+
     // Getters
     frc::Rotation2d GetYaw();
     units::radians_per_second_t GetYawRate();
@@ -70,7 +72,7 @@ private:
     static constexpr auto kMaxModuleAngularAcceleration = 200_rad_per_s_sq;
 
     static constexpr SwerveModuleConfig m_frontLeftConfig{
-        units::degree_t(-172.266),
+        units::degree_t(-126.29),
         {2.42,
          0.0,
          0.0,
@@ -89,7 +91,7 @@ private:
          0.042166_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_frontRightConfig{
-        units::degree_t(34.717),
+        units::degree_t(77.24),
         {2.42,
          0.0,
          0.0,
@@ -108,7 +110,7 @@ private:
          0.018826_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_backLeftConfig{
-        units::degree_t(62.666),
+        units::degree_t(-4.39),
         {2.42,
          0.0,
          0.0,
@@ -127,7 +129,7 @@ private:
          0.015321_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_backRightConfig{
-        units::degree_t(25.137),
+        units::degree_t(132.01),
         {2.42,
          0.0,
          0.0,
@@ -168,10 +170,10 @@ private:
     frc::ChassisSpeeds m_robotVelocity;
 
     // Swerve Modules
-    SwerveModule m_frontLeft{"FL", 0, 1, 2, m_frontLeftConfig};
-    SwerveModule m_frontRight{"FR", 2, 3, 3, m_frontRightConfig};
-    SwerveModule m_backLeft{"BL", 4, 5, 4, m_backLeftConfig};
-    SwerveModule m_backRight{"BR", 6, 7, 5, m_backRightConfig};
+    SwerveModule m_frontLeft{"FL", 0, 1, 20, m_frontLeftConfig};
+    SwerveModule m_frontRight{"FR", 2, 3, 21, m_frontRightConfig};
+    SwerveModule m_backLeft{"BL", 4, 5, 22, m_backLeftConfig};
+    SwerveModule m_backRight{"BR", 6, 7, 23, m_backRightConfig};
 
     // Trajectory Following
     frc::HolonomicDriveController m_trajectoryController{

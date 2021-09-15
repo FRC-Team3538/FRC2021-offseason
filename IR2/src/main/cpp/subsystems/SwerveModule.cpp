@@ -10,7 +10,8 @@
  * @param config The configuration data for this specific module
  */
 SwerveModule::SwerveModule(std::string moduleID, int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel, SwerveModuleConfig config)
-    : m_driveMotor(driveMotorChannel),
+    : moduleID(moduleID),
+      m_driveMotor(driveMotorChannel),
       m_turningMotor(turningMotorChannel),
       turningEncAbs(turningEncoderChannel),
       m_drivePIDController{config.drivePID.kP, config.drivePID.kI, config.drivePID.kD, {config.drivePID.max_acceleration, config.drivePID.max_jerk}},

@@ -87,6 +87,13 @@ private:
 
     frc::SwerveModuleState targetState;
 
+    std::string moduleID;
+
+    // Hardware
+    LazyTalonFX m_driveMotor;
+    LazyTalonFX m_turningMotor;
+    CANCoder turningEncAbs;
+
     // Configuration
     static constexpr auto kWheelRadius = 2.0_in;
     static constexpr int kEncoderResolution = 2048;
@@ -110,9 +117,4 @@ private:
 
     // Preferences
     frc::Preferences *prefs = frc::Preferences::GetInstance();
-
-    // Hardware
-    LazyTalonFX m_driveMotor;
-    LazyTalonFX m_turningMotor;
-    CANCoder turningEncAbs;
 };

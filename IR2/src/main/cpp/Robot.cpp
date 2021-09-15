@@ -22,7 +22,7 @@ void Robot::TeleopPeriodic()
   auto strafe = Deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal) * Drivetrain::kMaxSpeedLinear;
   auto rotate = Deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal) * Drivetrain::kMaxSpeedAngular;
 
-  IO.drivetrain.Drive(forward, strafe, rotate, false);
+  //IO.drivetrain.Drive(forward, strafe, rotate, false);
 
   // INTAKE CODE
   double rightTrig = Deadband(m_driver.GetTriggerAxis(frc::GenericHID::kRightHand), deadbandVal);

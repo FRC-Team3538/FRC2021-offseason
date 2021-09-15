@@ -1,5 +1,6 @@
 #pragma once
 
+#include <frc/smartdashboard/SmartDashboard.h>
 
 /**
  * Subsystem Interface

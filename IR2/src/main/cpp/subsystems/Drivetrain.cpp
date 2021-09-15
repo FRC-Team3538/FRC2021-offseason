@@ -6,6 +6,11 @@ Drivetrain::Drivetrain()
 
 void Drivetrain::UpdateTelemetry()
 {
+  frc::SmartDashboard::PutNumber("Front Left Ang", m_frontLeft.GetAngle().Degrees().value());
+  frc::SmartDashboard::PutNumber("Front Right Ang", m_frontRight.GetAngle().Degrees().value());
+  frc::SmartDashboard::PutNumber("Back Left Ang", m_backLeft.GetAngle().Degrees().value());
+  frc::SmartDashboard::PutNumber("Back Right Ang", m_backRight.GetAngle().Degrees().value());
+
 }
 
 void Drivetrain::ConfigureMotors()
@@ -78,6 +83,13 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
   m_backRight.SetModule(br);
 }
 
+void Drivetrain::Test(double speed, double angle)
+{
+  frc::SwerveModuleState f1;
+  f1.speed = 
+  m_frontLeft.SetModule()
+}
+
 frc::Rotation2d Drivetrain::GetYaw()
 {
   return frc::Rotation2d{units::degree_t{m_imu.GetAngle()}};
@@ -107,3 +119,4 @@ void Drivetrain::ResetYaw()
 {
   m_imu.Reset();
 }
+
