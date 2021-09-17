@@ -20,6 +20,7 @@
 #include <frc/DutyCycleEncoder.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
+#include <iostream>
 
 struct SwerveModuleDrivePIDConfig
 {
@@ -97,8 +98,8 @@ private:
     // Configuration
     static constexpr auto kWheelRadius = 2.0_in;
     static constexpr int kEncoderResolution = 2048;
-    static constexpr double kDriveGearboxRatio = 5.25;
-    static constexpr double kTurnGearboxRatio = 20.0;
+    static constexpr double kDriveGearboxRatio = 6.75;
+    static constexpr double kTurnGearboxRatio = 12.8;
 
     static constexpr auto kDriveScaleFactor =
         (2 * wpi::math::pi * kWheelRadius) / (kDriveGearboxRatio * kEncoderResolution);

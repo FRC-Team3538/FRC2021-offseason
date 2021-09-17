@@ -12,6 +12,7 @@
 #include "Subsystem.hpp"
 #include <frc/geometry/Translation2d.h>
 #include "adi/ADIS16470_IMU.h"
+#include <cmath>
 
 class Drivetrain : public Subsystem
 {
@@ -34,7 +35,7 @@ public:
     void ResetOdometry(const frc::Pose2d &pose);
     void UpdateOdometry();
 
-    void Test(double speed, double angle);
+    void Test(double y, double x);
 
     // Getters
     frc::Rotation2d GetYaw();
@@ -49,10 +50,10 @@ private:
 
     // Configuration
     static constexpr auto dist = kWheelToWheel / 2;
-    frc::Translation2d frontLeftLocation{+dist, +dist};
-    frc::Translation2d frontRightLocation{+dist, -dist};
-    frc::Translation2d backLeftLocation{-dist, +dist};
-    frc::Translation2d backRightLocation{-dist, -dist};
+    frc::Translation2d frontLeftLocation{+dist, -dist};
+    frc::Translation2d frontRightLocation{+dist, +dist};
+    frc::Translation2d backLeftLocation{-dist, -dist};
+    frc::Translation2d backRightLocation{-dist, +dist};
 
     frc::ADIS16470_IMU m_imu{
         frc::ADIS16470_IMU::IMUAxis::kZ,
@@ -78,17 +79,17 @@ private:
          0.0,
          kMaxModuleLinearAcceleration,
          kMaxModuleLinearJerk},
-        {8.0, // 2.5179,
+        {1.6, // 2.5179,
          0.0, // 0.0,
-         0.5, // 0.15272,
+         0.1, // 0.15272,
          kMaxModuleAngularVelocity,
          kMaxModuleAngularAcceleration},
         {0.673_V,
          2.35_V / 1_mps,
          0.0937_V / 1_mps_sq},
-        {0.49655_V,
-         0.65857_V / 1_rad_per_s,
-         0.042166_V / 1_rad_per_s_sq}};
+        {0.1_V,
+         0.12_V / 1_rad_per_s,
+         0.008_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_frontRightConfig{
         units::degree_t(77.24),
@@ -97,17 +98,17 @@ private:
          0.0,
          kMaxModuleLinearAcceleration,
          kMaxModuleLinearJerk},
-        {8.0, // 4.2946,
+        {1.6, // 2.5179,
          0.0, // 0.0,
-         0.5, // 0.050889,
+         0.1, // 0.15272,
          kMaxModuleAngularVelocity,
          kMaxModuleAngularAcceleration},
         {0.673_V,
          2.35_V / 1_mps,
          0.0937_V / 1_mps_sq},
-        {0.58739_V,
-         0.64399_V / 1_rad_per_s,
-         0.018826_V / 1_rad_per_s_sq}};
+        {0.1_V,
+         0.12_V / 1_rad_per_s,
+         0.008_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_backLeftConfig{
         units::degree_t(-4.39),
@@ -116,17 +117,17 @@ private:
          0.0,
          kMaxModuleLinearAcceleration,
          kMaxModuleLinearJerk},
-        {8.0, // 4.9251,
+        {1.6, // 2.5179,
          0.0, // 0.0,
-         0.5, // 0.048966,
+         0.1, // 0.15272,
          kMaxModuleAngularVelocity,
          kMaxModuleAngularAcceleration},
         {0.673_V,
          2.35_V / 1_mps,
          0.0937_V / 1_mps_sq},
-        {1.0045_V,
-         0.6584_V / 1_rad_per_s,
-         0.015321_V / 1_rad_per_s_sq}};
+        {0.1_V,
+         0.12_V / 1_rad_per_s,
+         0.008_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_backRightConfig{
         units::degree_t(132.01),
@@ -135,17 +136,17 @@ private:
          0.0,
          kMaxModuleLinearAcceleration,
          kMaxModuleLinearJerk},
-        {8.0, // 3.5128,
+        {1.6, // 2.5179,
          0.0, // 0.0,
-         0.5, // 0.059802,
+         0.1, // 0.15272,
          kMaxModuleAngularVelocity,
          kMaxModuleAngularAcceleration},
         {0.673_V,
          2.35_V / 1_mps,
          0.0937_V / 1_mps_sq},
-        {0.63069_V,
-         0.6333_V / 1_rad_per_s,
-         0.024316_V / 1_rad_per_s_sq}};
+        {0.1_V,
+         0.12_V / 1_rad_per_s,
+         0.008_V / 1_rad_per_s_sq}};
 
     // Odometry
     frc::SwerveDriveKinematics<4> m_kinematics{

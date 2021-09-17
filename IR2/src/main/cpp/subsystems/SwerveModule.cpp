@@ -90,6 +90,8 @@ frc::Rotation2d SwerveModule::GetAngle()
  */
 void SwerveModule::SetModule(const frc::SwerveModuleState &state)
 {
+  currentState = GetState();
+
   targetState = state;
 
   const auto opt_state = frc::SwerveModuleState::Optimize(targetState, currentState.angle);
@@ -114,6 +116,7 @@ void SwerveModule::SetModule(const frc::SwerveModuleState &state)
   const auto m_turnVolts = units::volt_t{turnOutput} + turnFeedforward;
 
   // Output
+  //std::cout << m_turnVolts.value() << std::endl;
   m_driveMotor.SetVoltage(m_driveVolts);
   m_turningMotor.SetVoltage(m_turnVolts);
 }

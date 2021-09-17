@@ -2,6 +2,7 @@
 
 Drivetrain::Drivetrain()
 {
+  m_imu.Reset();
 }
 
 void Drivetrain::UpdateTelemetry()
@@ -11,6 +12,7 @@ void Drivetrain::UpdateTelemetry()
   frc::SmartDashboard::PutNumber("Back Left Ang", m_backLeft.GetAngle().Degrees().value());
   frc::SmartDashboard::PutNumber("Back Right Ang", m_backRight.GetAngle().Degrees().value());
 
+  frc::SmartDashboard::PutNumber("Yaw", GetYaw().Degrees().value());
 }
 
 void Drivetrain::ConfigureMotors()
@@ -83,16 +85,18 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
   m_backRight.SetModule(br);
 }
 
-void Drivetrain::Test(double speed, double angle)
+void Drivetrain::Test(double y, double x)
 {
   frc::SwerveModuleState f1;
-  f1.speed = 
-  m_frontLeft.SetModule()
+  f1.speed = std::sqrt(std::pow(y, 2) + std::pow(x, 2)) * kMaxSpeedLinear;
+  f1.angle = frc::Rotation2d(units::radian_t(std::atan2(-x, y)));
+  m_frontLeft.SetModule(f1);
+  std::cout << f1.angle.Degrees().value() << std::endl;
 }
 
 frc::Rotation2d Drivetrain::GetYaw()
 {
-  return frc::Rotation2d{units::degree_t{m_imu.GetAngle()}};
+  return frc::Rotation2d{units::degree_t{-m_imu.GetAngle()}};
 }
 
 void Drivetrain::UpdateOdometry()
@@ -120,3 +124,8 @@ void Drivetrain::ResetYaw()
   m_imu.Reset();
 }
 
+void Drivetrain::ResetOdometry(const frc::Pose2d &pose)
+{
+  m_odometry.ResetPosition(pose, GetYaw());
+  m_poseEstimator.ResetPosition(pose, GetYaw());
+}
