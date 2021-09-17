@@ -24,11 +24,6 @@ void Robot::TeleopPeriodic()
 
   IO.drivetrain.Drive(forward, strafe, rotate, true);
 
-  double y = Deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal);
-  double x = Deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal);
-
-  //IO.drivetrain.Test(y, x);
-
   // INTAKE CODE
   double rightTrig = Deadband(m_driver.GetTriggerAxis(frc::GenericHID::kRightHand), deadbandVal);
   double leftTrig = Deadband(m_driver.GetTriggerAxis(frc::GenericHID::kLeftHand), deadbandVal);
