@@ -36,5 +36,5 @@ private:
     LazyTalonFX climb{14};
 
     frc::Solenoid climbPiston{1};
-    frc::Solenoid climbLock{2};
+    // frc::Solenoid climbLock{2};
 };

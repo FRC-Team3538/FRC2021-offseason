@@ -18,14 +18,14 @@ void Climber::SetClimber(double speed)
 {
     climb._Set(speed);
 
-    if(std::abs(speed) > 0.0)
-    {
-        climbLock.Set(false);
-    }
-    else
-    {
-        climbLock.Set(true);
-    }
+    // if(std::abs(speed) > 0.0)
+    // {
+    //     climbLock.Set(false);
+    // }
+    // else
+    // {
+    //     climbLock.Set(true);
+    // }
 }
 
 void Climber::SetClimberPosition(State state)
