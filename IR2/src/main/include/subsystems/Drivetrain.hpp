@@ -51,10 +51,10 @@ private:
 
     // Configuration
     static constexpr auto dist = kWheelToWheel / 2;
-    frc::Translation2d frontLeftLocation{+dist, -dist};
-    frc::Translation2d frontRightLocation{+dist, +dist};
-    frc::Translation2d backLeftLocation{-dist, -dist};
-    frc::Translation2d backRightLocation{-dist, +dist};
+    frc::Translation2d frontLeftLocation{+dist, +dist};
+    frc::Translation2d frontRightLocation{+dist, -dist};
+    frc::Translation2d backLeftLocation{-dist, +dist};
+    frc::Translation2d backRightLocation{-dist, -dist};
 
     frc::ADIS16470_IMU m_imu{
         frc::ADIS16470_IMU::IMUAxis::kZ,
@@ -93,7 +93,7 @@ private:
          0.004_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_frontRightConfig{
-        units::degree_t(-104.062),
+        units::degree_t(75.938),
         {1.89,
          0.0,
          0.0,
@@ -131,7 +131,7 @@ private:
          0.008_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_backRightConfig{
-        units::degree_t(-51.152),
+        units::degree_t(128.848),
         {1.89,
          0.0,
          0.0,

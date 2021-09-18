@@ -97,7 +97,7 @@ void Drivetrain::Test(double y, double x)
 
 frc::Rotation2d Drivetrain::GetYaw()
 {
-  return frc::Rotation2d{units::degree_t{-m_imu.GetAngle()}};
+  return frc::Rotation2d{units::degree_t{m_imu.GetAngle()}};
 }
 
 void Drivetrain::UpdateOdometry()

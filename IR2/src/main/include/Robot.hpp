@@ -34,5 +34,7 @@ class Robot : public frc::TimedRobot {
     double Deadband(double value, double deadband);
     const double deadbandVal = 0.1;
 
+    bool fieldCentric = true;
+
     vision::RJVisionPipeline::visionData data;
 };

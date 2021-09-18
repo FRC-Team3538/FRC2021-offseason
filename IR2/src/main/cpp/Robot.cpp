@@ -30,10 +30,17 @@ void Robot::TeleopPeriodic()
 {
   // DRIVE CODE
   auto forward = smooth_deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal , 1.0) * Drivetrain::kMaxSpeedLinear;
-  auto strafe = -smooth_deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal , 1.0) * Drivetrain::kMaxSpeedLinear;
-  auto rotate = -smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular;
+  auto strafe = smooth_deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal , 1.0) * Drivetrain::kMaxSpeedLinear;
+  auto rotate = smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular;
 
-  IO.drivetrain.Drive(forward, strafe, rotate, true);
+  if(m_driver.GetOptionsButtonPressed())
+    fieldCentric = !fieldCentric;
+
+  if(m_driver.GetShareButtonPressed())
+    IO.drivetrain.ResetYaw();
+
+  frc::SmartDashboard::PutBoolean("Field Centric", fieldCentric);
+  IO.drivetrain.Drive(forward, strafe, rotate, fieldCentric);
 
   // INTAKE CODE
   double rightTrig = Deadband(m_driver.GetTriggerAxis(frc::GenericHID::kRightHand), deadbandVal);
