@@ -10,7 +10,8 @@ double smooth_deadband(double value, double deadband, double max)
   {
     return 0.0;
   }
-  else {
+  else
+  {
     return (value - deadband) / (max - deadband) * max;
   }
 }
@@ -19,27 +20,39 @@ void Robot::RobotInit() {}
 void Robot::RobotPeriodic()
 {
   //IO.vis.Periodic();
+  frc::SmartDashboard::PutBoolean("Field Centric", fieldCentric);
   IO.UpdateTelemetry();
+  autoPrograms.SmartDash();
+  IO.drivetrain.UpdateOdometry();
+
+  if (m_driver.GetOptionsButtonPressed())
+    fieldCentric = !fieldCentric;
+
+  if (m_driver.GetShareButtonPressed())
+    IO.drivetrain.ResetYaw();
 }
 
-void Robot::AutonomousInit() {}
-void Robot::AutonomousPeriodic() {}
+void Robot::AutonomousInit()
+{
+  IO.drivetrain.ResetYaw();
+  autoPrograms.Init();
+}
+void Robot::AutonomousPeriodic()
+{
+  autoPrograms.Run();
+}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic()
 {
   // DRIVE CODE
-  auto forward = smooth_deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal , 1.0) * Drivetrain::kMaxSpeedLinear;
-  auto strafe = smooth_deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal , 1.0) * Drivetrain::kMaxSpeedLinear;
-  auto rotate = smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular;
+  auto forward = -smooth_deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
+  auto strafe = -smooth_deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
+  auto rotate = -smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular;
 
-  if(m_driver.GetOptionsButtonPressed())
-    fieldCentric = !fieldCentric;
 
-  if(m_driver.GetShareButtonPressed())
-    IO.drivetrain.ResetYaw();
+  //std::cout << forward << ", " << strafe << ", " << rotate << std::endl;
 
-  frc::SmartDashboard::PutBoolean("Field Centric", fieldCentric);
   IO.drivetrain.Drive(forward, strafe, rotate, fieldCentric);
 
   // INTAKE CODE
@@ -66,9 +79,8 @@ void Robot::TeleopPeriodic()
   if (false)
   {
     data = IO.vis.Run();
-    if(data.filled)
+    if (data.filled)
     {
-      
     }
   }
   else

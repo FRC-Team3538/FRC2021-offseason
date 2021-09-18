@@ -1,33 +1,33 @@
-#include "auto/AutoLine.hpp"
+#include "auto/AutoTest.hpp"
 
 // Name for Smart Dash Chooser
-std::string AutoLine::GetName()
+std::string AutoTest::GetName()
 {
-    return "1 - Line";
+    return "2 - Test";
 }
 
 // Initialization
 // Constructor requires a reference to the robot map
-AutoLine::AutoLine(Robotmap &IO) : IO(IO)
+AutoTest::AutoTest(Robotmap &IO) : IO(IO)
 {
     m_state = 0;
 }
 
-AutoLine::~AutoLine() {}
+AutoTest::~AutoTest() {}
 
 //State Machine
-void AutoLine::NextState()
+void AutoTest::NextState()
 {
     m_state++;
     m_autoTimer.Reset();
     m_autoTimer.Start();
 }
 
-void AutoLine::Init()
+void AutoTest::Init()
 {
-    units::feet_per_second_t maxLinearVel = 4_fps;
+    units::feet_per_second_t maxLinearVel = 8_fps;
     // units::standard_gravity_t maxCentripetalAcc = 0.5_SG;
-    units::feet_per_second_squared_t maxLinearAcc = 4_fps_sq;
+    units::feet_per_second_squared_t maxLinearAcc = 8_fps_sq;
 
     // frc::TrajectoryConfig config(Drivetrain::kMaxSpeedLinear, Drivetrain::kMaxAccelerationLinear);
     frc::TrajectoryConfig config(maxLinearVel, maxLinearAcc);
@@ -37,7 +37,7 @@ void AutoLine::Init()
     std::vector<frc::Spline<5>::ControlVector> p1;
 
     {
-        io::CSVReader<6> csv("/home/lvuser/deploy/PathWeaver/Paths/Line.path");
+        io::CSVReader<6> csv("/home/lvuser/deploy/PathWeaver/Paths/Curve.path");
         csv.read_header(io::ignore_extra_column | io::ignore_missing_column, "X", "Y", "Tangent X", "Tangent Y", "ddx", "ddy");
         double x, y, dx, dy, ddx = 0, ddy = 0;
         while (csv.read_row(x, y, dx, dy, ddx, ddy))
@@ -56,15 +56,21 @@ void AutoLine::Init()
 }
 
 // Execute the program
-void AutoLine::Run()
+void AutoTest::Run()
 {
     switch (m_state)
     {
     case 0:
     {
+        auto theta = 0.0_deg;
+        auto thetaPrime = 90.0_deg;
+
         auto reference = m_trajectory.Sample(m_autoTimer.Get());
 
-        IO.drivetrain.Drive(reference, 0.0_deg);
+        auto yaw = theta + ((thetaPrime - theta)/(m_trajectory.TotalTime() * 0.5) * m_autoTimer.Get());
+        yaw = units::math::abs(yaw - theta) > units::math::abs(thetaPrime - theta) ? thetaPrime : yaw;
+
+        IO.drivetrain.Drive(reference, yaw);
 
         if ((m_autoTimer.Get() > m_trajectory.TotalTime()))
         {
@@ -74,13 +80,14 @@ void AutoLine::Run()
     }
     default:
     {
+        IO.drivetrain.Drive(units::meters_per_second_t{0.0}, units::meters_per_second_t{0.0}, units::radians_per_second_t{0.0}, false);
     }
     }
 
     UpdateSmartDash();
 }
 
-void AutoLine::UpdateSmartDash()
+void AutoTest::UpdateSmartDash()
 {
     frc::SmartDashboard::PutNumber("Auto State", m_state);
 }

@@ -41,7 +41,7 @@ public:
     frc::Rotation2d GetYaw();
     units::radians_per_second_t GetYawRate();
 
-    static constexpr units::meters_per_second_t kMaxSpeedLinear = 16_fps;
+    static constexpr units::meters_per_second_t kMaxSpeedLinear = 8_fps; //16
     static constexpr units::radians_per_second_t kMaxSpeedAngular = 360_deg_per_s;
     static constexpr units::meters_per_second_squared_t kMaxAccelerationLinear = units::feet_per_second_squared_t(20.0);
     static constexpr units::inch_t kWheelToWheel = 22_in;
@@ -80,9 +80,9 @@ private:
          0.0,
          kMaxModuleLinearAcceleration,
          kMaxModuleLinearJerk},
-        {1.09, // 2.5179,
-         0.0, // 0.0,
-         0.15, // 0.15272,
+        {1.44,   // 2.5179,
+         0.0,    // 0.0,
+         0.0125, // 0.15272,
          kMaxModuleAngularVelocity,
          kMaxModuleAngularAcceleration},
         {0.607_V,
@@ -99,9 +99,9 @@ private:
          0.0,
          kMaxModuleLinearAcceleration,
          kMaxModuleLinearJerk},
-        {1.09, // 2.5179,
-         0.0, // 0.0,
-         0.15, // 0.15272,
+        {1.44,   // 2.5179,
+         0.0,    // 0.0,
+         0.0125, // 0.15272,
          kMaxModuleAngularVelocity,
          kMaxModuleAngularAcceleration},
         {0.607_V,
@@ -118,9 +118,9 @@ private:
          0.0,
          kMaxModuleLinearAcceleration,
          kMaxModuleLinearJerk},
-        {1.09, // 2.5179,
-         0.0, // 0.0,
-         0.15, // 0.15272,
+        {1.44,   // 2.5179,
+         0.0,    // 0.0,
+         0.0125, // 0.15272,
          kMaxModuleAngularVelocity,
          kMaxModuleAngularAcceleration},
         {0.607_V,
@@ -137,9 +137,9 @@ private:
          0.0,
          kMaxModuleLinearAcceleration,
          kMaxModuleLinearJerk},
-        {1.09, // 2.5179,
-         0.0, // 0.0,
-         0.15, // 0.15272,
+        {1.44,   // 2.5179,
+         0.0,    // 0.0,
+         0.0125, // 0.15272,
          kMaxModuleAngularVelocity,
          kMaxModuleAngularAcceleration},
         {0.607_V,
@@ -148,6 +148,10 @@ private:
         {0.1_V,
          0.12_V / 1_rad_per_s,
          0.008_V / 1_rad_per_s_sq}};
+
+    // Heading Lock
+    bool m_YawLockActive = true;
+    frc2::PIDController m_yawLockPID{5.0, 0.0, 0.1};
 
     // Odometry
     frc::SwerveDriveKinematics<4> m_kinematics{

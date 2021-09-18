@@ -4,6 +4,8 @@ Drivetrain::Drivetrain()
 {
   m_imu.Reset();
   m_imu.Calibrate();
+
+  m_yawLockPID.EnableContinuousInput(-180, 180);
 }
 
 void Drivetrain::UpdateTelemetry()
@@ -14,6 +16,9 @@ void Drivetrain::UpdateTelemetry()
   frc::SmartDashboard::PutNumber("Back Right Ang", m_backRight.GetAngle().Degrees().value());
 
   frc::SmartDashboard::PutNumber("Yaw", GetYaw().Degrees().value());
+  frc::SmartDashboard::PutBoolean("Yaw Lock", m_YawLockActive);
+
+  frc::SmartDashboard::PutNumber("Odometry X", m_odometry.GetPose().X().value());
 }
 
 void Drivetrain::ConfigureMotors()
@@ -39,30 +44,30 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
   m_fieldRelative = fieldRelative;
 
   // Heading Lock
-  //constexpr auto noRotThreshold = 0.1_deg_per_s;
-  // if (units::math::abs(rot) > noRotThreshold)
-  // {
-  //   // Disable YawLock as soon as any rotation command is received
-  //   m_YawLockActive = false;
-  // }
-  // else if (units::math::abs(rot) < noRotThreshold && units::math::abs(GetYawRate()) < 30_deg_per_s)
-  // {
-  //   // Wait for the robot to stop spinning to enable Yaw Lock
-  //   m_YawLockActive = true;
-  // }
+  constexpr auto noRotThreshold = 0.1_deg_per_s;
+  if (units::math::abs(rot) > noRotThreshold)
+  {
+    // Disable YawLock as soon as any rotation command is received
+    m_YawLockActive = false;
+  }
+  else if (units::math::abs(rot) < noRotThreshold && units::math::abs(GetYawRate()) < 30_deg_per_s)
+  {
+    // Wait for the robot to stop spinning to enable Yaw Lock
+    m_YawLockActive = true;
+  }
 
-  // if (m_YawLockActive)
-  // {
-  //   // Robot will automatically maintain current yaw
-  //   auto r = m_yawLockPID.Calculate(GetYaw().Degrees().value());
-  //   rot = units::degrees_per_second_t{r};
-  // }
-  // else
-  // {
-  //   // Manual control, save the current yaw.
-  //   m_yawLockPID.SetSetpoint(GetYaw().Degrees().value());
-  //   m_yawLockPID.Reset();
-  // }
+  if (m_YawLockActive)
+  {
+    // Robot will automatically maintain current yaw
+    auto r = m_yawLockPID.Calculate(GetYaw().Degrees().value());
+    rot = units::degrees_per_second_t{r};
+  }
+  else
+  {
+    // Manual control, save the current yaw.
+    m_yawLockPID.SetSetpoint(GetYaw().Degrees().value());
+    m_yawLockPID.Reset();
+  }
 
   // Transform Field Oriented command to a Robot Relative Command
   if (fieldRelative)
@@ -123,10 +128,19 @@ void Drivetrain::UpdateOdometry()
 void Drivetrain::ResetYaw()
 {
   m_imu.Reset();
+  m_yawLockPID.SetSetpoint(GetYaw().Degrees().value());
+  m_yawLockPID.Reset();
 }
 
 void Drivetrain::ResetOdometry(const frc::Pose2d &pose)
 {
   m_odometry.ResetPosition(pose, GetYaw());
   m_poseEstimator.ResetPosition(pose, GetYaw());
+  m_yawLockPID.SetSetpoint(GetYaw().Degrees().value());
+  m_yawLockPID.Reset();
+}
+
+units::radians_per_second_t Drivetrain::GetYawRate()
+{
+  return units::degrees_per_second_t(m_robotVelocity.omega);
 }

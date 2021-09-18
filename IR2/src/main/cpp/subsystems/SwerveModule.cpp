@@ -22,9 +22,10 @@ SwerveModule::SwerveModule(std::string moduleID, int driveMotorChannel, int turn
   // Drive Motor Configuration
   m_driveMotor.ConfigFactoryDefault();
   m_driveMotor.SetStatusFramePeriod(ctre::phoenix::motorcontrol::StatusFrameEnhanced::Status_3_Quadrature, 18);
-  m_driveMotor.SetInverted(false); // Remember: forward-positive!
+  m_driveMotor.SetInverted(true); // Remember: forward-positive!
   m_driveMotor.SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
   m_driveMotor.ConfigSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, kDriveMotorCurrentLimit.value(), kDriveMotorCurrentLimit.value(), 0.0));
+  m_driveMotor.SetSensorPhase(false);
 
   // Turning Motor Configuration
   m_turningMotor.ConfigFactoryDefault();
@@ -116,7 +117,7 @@ void SwerveModule::SetModule(const frc::SwerveModuleState &state)
   const auto m_turnVolts = units::volt_t{turnOutput} + turnFeedforward;
 
   // Output
-  //std::cout << m_turnVolts.value() << std::endl;
+  //std::cout << m_driveVolts.value() << std::endl;
   m_driveMotor.SetVoltage(m_driveVolts);
   m_turningMotor.SetVoltage(m_turnVolts);
 }
