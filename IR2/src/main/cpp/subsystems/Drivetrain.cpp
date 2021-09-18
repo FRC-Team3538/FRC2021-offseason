@@ -3,6 +3,7 @@
 Drivetrain::Drivetrain()
 {
   m_imu.Reset();
+  m_imu.Calibrate();
 }
 
 void Drivetrain::UpdateTelemetry()

@@ -18,9 +18,9 @@ void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic()
 {
   // DRIVE CODE
-  auto forward = Deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal) * Drivetrain::kMaxSpeedLinear;
-  auto strafe = -Deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal) * Drivetrain::kMaxSpeedLinear;
-  auto rotate = -Deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal) * Drivetrain::kMaxSpeedAngular;
+  auto forward = smooth_deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal , 1.0) * Drivetrain::kMaxSpeedLinear;
+  auto strafe = -smooth_deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal , 1.0) * Drivetrain::kMaxSpeedLinear;
+  auto rotate = -smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular;
 
   IO.drivetrain.Drive(forward, strafe, rotate, true);
 
@@ -81,6 +81,17 @@ double Robot::Deadband(double value, double deadband)
   else
   {
     return value;
+  }
+}
+
+double smooth_deadband(double value, double deadband, double max)
+{
+  if (std::abs(value) < deadband)
+  {
+    return 0.0;
+  }
+  else {
+    return (value - deadband) / (max - deadband) * max;
   }
 }
 
