@@ -38,7 +38,7 @@ private:
 
   bool fieldCentric = true;
 
-  vision::RJVisionPipeline::visionData data;
+  // vision::RJVisionPipeline::visionData data;
 
   AutoPrograms autoPrograms{IO};
 };

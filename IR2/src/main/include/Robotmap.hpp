@@ -2,17 +2,19 @@
 
 #include "subsystems/Drivetrain.hpp"
 #include "subsystems/Intake.hpp"
-#include "subsystems/Shooter.hpp"
-#include "subsystems/RJVisionPipeline.hpp"
+// #include "subsystems/Shooter.hpp"
+#include "subsystems/Climber.hpp"
+// #include "subsystems/RJVisionPipeline.hpp"
 
 class Robotmap
 {
 public:
     Drivetrain drivetrain;
     Intake intake;
-    Shooter shooter;
+    // Shooter shooter;
+    Climber climber;
 
-    vision::RJVisionPipeline vis;
+    // vision::RJVisionPipeline vis;
 
     void UpdateTelemetry()
     {
@@ -30,7 +32,7 @@ public:
             }
             case 2:
             {
-                shooter.UpdateTelemetry();
+                climber.UpdateTelemetry();
                 break;
             }
             default:
