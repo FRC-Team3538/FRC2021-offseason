@@ -4,6 +4,17 @@
 
 #include "Robot.hpp"
 
+double smooth_deadband(double value, double deadband, double max)
+{
+  if (std::abs(value) < deadband)
+  {
+    return 0.0;
+  }
+  else {
+    return (value - deadband) / (max - deadband) * max;
+  }
+}
+
 void Robot::RobotInit() {}
 void Robot::RobotPeriodic()
 {
@@ -81,17 +92,6 @@ double Robot::Deadband(double value, double deadband)
   else
   {
     return value;
-  }
-}
-
-double smooth_deadband(double value, double deadband, double max)
-{
-  if (std::abs(value) < deadband)
-  {
-    return 0.0;
-  }
-  else {
-    return (value - deadband) / (max - deadband) * max;
   }
 }
 

@@ -40,7 +40,7 @@ SwerveModule::SwerveModule(std::string moduleID, int driveMotorChannel, int turn
   encoderConfig.initializationStrategy = ctre::phoenix::sensors::SensorInitializationStrategy::BootToAbsolutePosition;
   encoderConfig.absoluteSensorRange = ctre::phoenix::sensors::AbsoluteSensorRange::Signed_PlusMinus180;
   encoderConfig.magnetOffsetDegrees = config.angleOffset.value();
-  encoderConfig.sensorDirection = true;
+  encoderConfig.sensorDirection = false;
   turningEncAbs.ConfigAllSettings(encoderConfig);
 
   // Limit the PID Controller's input range between -pi and pi and set the input

@@ -74,7 +74,7 @@ private:
     static constexpr auto kMaxModuleAngularAcceleration = 200_rad_per_s_sq;
 
     static constexpr SwerveModuleConfig m_frontLeftConfig{
-        units::degree_t(-126.29),
+        units::degree_t(-123.135),
         {1.89,
          0.0,
          0.0,
@@ -93,7 +93,7 @@ private:
          0.004_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_frontRightConfig{
-        units::degree_t(77.24),
+        units::degree_t(-104.062),
         {1.89,
          0.0,
          0.0,
@@ -112,7 +112,7 @@ private:
          0.008_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_backLeftConfig{
-        units::degree_t(-4.39),
+        units::degree_t(-2.549),
         {1.89,
          0.0,
          0.0,
@@ -131,7 +131,7 @@ private:
          0.008_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_backRightConfig{
-        units::degree_t(132.01),
+        units::degree_t(-51.152),
         {1.89,
          0.0,
          0.0,
