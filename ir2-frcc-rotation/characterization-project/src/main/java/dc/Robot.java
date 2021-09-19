@@ -60,7 +60,7 @@ public class Robot extends TimedRobot {
   static private double ENCODER_EDGES_PER_REV = 2048;
   static private int PIDIDX = 0;
   static private int ENCODER_EPR = 2048;
-  static private double GEARING = 12.8;
+  static private double GEARING = 37.5;
   
   private double encoderConstant = (1 / GEARING) * (1 / ENCODER_EDGES_PER_REV);
 
@@ -151,19 +151,19 @@ public class Robot extends TimedRobot {
     stick = new Joystick(0);
     
     // create left motor
-    WPI_TalonFX leftMotor = setupWPI_TalonFX(1, Sides.LEFT, false);
+    WPI_TalonFX leftMotor = setupWPI_TalonFX(9, Sides.LEFT, false);
 
-    WPI_TalonFX leftFollowerID3 = setupWPI_TalonFX(3, Sides.FOLLOWER, false);
-    // leftFollowerID3.follow(leftMotor);
-    WPI_TalonFX leftFollowerID5 = setupWPI_TalonFX(5, Sides.FOLLOWER, false);
-    // leftFollowerID5.follow(leftMotor);
-    WPI_TalonFX leftFollowerID7 = setupWPI_TalonFX(7, Sides.FOLLOWER, false);
-    // leftFollowerID7.follow(leftMotor);
-
-    WPI_TalonFX rightFollowerID0 = setupWPI_TalonFX(0, Sides.RIGHT, false);
-    WPI_TalonFX rightFollowerID2 = setupWPI_TalonFX(2, Sides.RIGHT, false);
-    WPI_TalonFX rightFollowerID4 = setupWPI_TalonFX(4, Sides.RIGHT, false);
-    WPI_TalonFX rightFollowerID6 = setupWPI_TalonFX(6, Sides.RIGHT, false);
+    // WPI_TalonFX leftFollowerID3 = setupWPI_TalonFX(3, Sides.FOLLOWER, false);
+    // // leftFollowerID3.follow(leftMotor);
+    // WPI_TalonFX leftFollowerID5 = setupWPI_TalonFX(5, Sides.FOLLOWER, false);
+    // // leftFollowerID5.follow(leftMotor);
+    // WPI_TalonFX leftFollowerID7 = setupWPI_TalonFX(7, Sides.FOLLOWER, false);
+    // // leftFollowerID7.follow(leftMotor);
+// 
+    // WPI_TalonFX rightFollowerID0 = setupWPI_TalonFX(0, Sides.RIGHT, false);
+    // WPI_TalonFX rightFollowerID2 = setupWPI_TalonFX(2, Sides.RIGHT, false);
+    // WPI_TalonFX rightFollowerID4 = setupWPI_TalonFX(4, Sides.RIGHT, false);
+    // WPI_TalonFX rightFollowerID6 = setupWPI_TalonFX(6, Sides.RIGHT, false);
 
     rightEncoderPosition = leftEncoderPosition;
     rightEncoderRate = leftEncoderRate;
