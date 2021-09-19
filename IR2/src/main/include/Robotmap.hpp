@@ -5,14 +5,16 @@
 // #include "subsystems/Shooter.hpp"
 #include "subsystems/Climber.hpp"
 // #include "subsystems/RJVisionPipeline.hpp"
+#include <frc/Compressor.h>
 
 class Robotmap
 {
 public:
     Drivetrain drivetrain;
     Intake intake;
-    // Shooter shooter;
+    // Shooter shooters;
     Climber climber;
+    frc::Compressor compressor;
 
     // vision::RJVisionPipeline vis;
 
