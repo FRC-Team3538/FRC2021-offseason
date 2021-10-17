@@ -5,6 +5,17 @@ Spindexer::Spindexer()
 
 }
 
+void Spindexer::UpdateTelemetry()
+{
+    frc::SmartDashboard::PutNumber("Spindexer Target Voltage", VOLTAGE);
+    frc::SmartDashboard::PutNumber("Spindexer RPS", (spindexerMotor.GetSelectedSensorVelocity(0) * kScaleFactor * 10.0));
+}
+
+void Spindexer::ConfigureMotors()
+{
+    spindexerMotor.SetInverted(false);
+}
+
 /**
  * Sets the state of the spindexer
  * 
@@ -16,13 +27,13 @@ void Spindexer::SetState(State state)
     {
         case State::Idle:
         {
-            spindexerMotor._Set(0.1);
+            spindexerMotor._Set(-0.15);
             break;
         }
 
         case State::Feed:
         {
-            spindexerMotor._Set(0.25);
+            spindexerMotor._Set(-0.5);
             break;
         }
 
@@ -32,9 +43,20 @@ void Spindexer::SetState(State state)
             break;
         }
 
+        case State::Custom:
+        {
+            spindexerMotor._SetVoltage(units::volt_t{VOLTAGE});
+            break;
+        }
+
         default:
         {
             spindexerMotor._Set(0.0);
         }
     }
+}
+
+void Spindexer::Set(double speed)
+{
+    spindexerMotor._Set(speed);
 }

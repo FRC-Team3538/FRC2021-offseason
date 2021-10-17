@@ -16,7 +16,10 @@ double smooth_deadband(double value, double deadband, double max)
     }
 }
 
-void Robot::RobotInit() {}
+void Robot::RobotInit()
+{
+    IO.ConfigureMotors();
+}
 void Robot::RobotPeriodic()
 {
     //IO.vis.Periodic();
@@ -30,6 +33,8 @@ void Robot::RobotPeriodic()
 
     if (m_driver.GetShareButtonPressed())
         IO.drivetrain.ResetYaw();
+
+    frc::SmartDashboard::PutNumber("RPM", RPMs);
 }
 
 void Robot::AutonomousInit()
@@ -71,17 +76,46 @@ void Robot::TeleopPeriodic()
         IO.intake.SetPosition(Intake::Position::Stowed);
     }
 
+    if (m_operator.GetTriangleButton())
+    {
+        IO.shooter.SetShooterVelocity(units::revolutions_per_minute_t{RPMs});
+        if (std::abs(IO.shooter.GetShooterVelocity().value() - RPMs) < 200.0)
+        {
+            IO.shooter.SetFeeder(0.5);
+            IO.spindexer.SetState(Spindexer::Feed);
+        }
+    }
+    else
+    {
+        IO.spindexer.SetState(Spindexer::Idle);
+        IO.shooter.SetFeeder(0.0);
+        IO.shooter.SetShooterVelocity(units::revolutions_per_minute_t{0.0});
+    }
+
     IO.intake.SetSpeed(-leftTrig + rightTrig);
 
-    // Climber
+    // CLIMBER CODE
 
     if (m_operator.GetSquareButtonPressed())
     {
-        IO.climber.SetClimberPosition(Climber::State::Deployed);
+        climbState = Climber::State::Deployed;
     }
     else if (m_operator.GetCircleButtonPressed())
     {
-        IO.climber.SetClimberPosition(Climber::State::Stowed);
+        climbState = Climber::State::Stowed;
+    }
+
+    if (climbState == Climber::State::Deployed)
+    {
+        // IO.shooter.SetTurretAngle(units::degree_t{0.0});
+        // if (std::abs(IO.shooter.GetTurretAngle().value()) < 4.0)
+        // {
+        IO.climber.SetClimberPosition(climbState);
+        //}
+    }
+    else
+    {
+        IO.climber.SetClimberPosition(climbState);
     }
 
     int pov = m_operator.GetPOV();
@@ -99,18 +133,35 @@ void Robot::TeleopPeriodic()
         IO.climber.SetClimber(0.0);
     }
 
-    // SHOOTER
+    // SHOOTER CODE
 
-    if (false)
+    if (true && (climbState == Climber::State::Stowed))
     {
         // data = IO.vis.Run();
         // if (data.filled)
         // {
+        //     if ((std::abs(data.angle) < 0.5) && !shooterLocked)
+        //     {
+        //         distance = data.distance;
+        //         shooterLocked = true;
+        //     }
+        //     else if (shooterLocked)
+        //     {
+        //         IO.shooter.AutoSetVelocity(units::inch_t{distance});
+        //     }
+        //     else
+        //     {
+        //         IO.shooter.SetTurretAngle(IO.shooter.GetTurretAngle() - units::degree_t{data.angle});
+        //     }
         // }
     }
     else
     {
+        shooterLocked = false;
+        IO.shooter.SetTurretAngle(units::degree_t{0.0});
     }
+
+    IO.shooter.Periodic();
 }
 
 void Robot::DisabledInit() {}

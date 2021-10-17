@@ -10,6 +10,8 @@ protected:
     units::voltage::volt_t mLastV = units::volt_t{420.0};
     const char *device = "Talon FX";
 
+    int lastState = -1;
+
 public:
     LazyTalonFX() = delete;
     LazyTalonFX(int ID) : BaseMotorController(ID, device), BaseTalon(ID, device), TalonFX(ID), WPI_BaseMotorController(ID, device), WPI_TalonFX(ID)
@@ -25,19 +27,21 @@ public:
      */
     void _Set(double value)
     {
-        if (value != mLastSet)
+        if (value != mLastSet || lastState == 1)
         {
             mLastSet = value;
             Set(value);
         }
+        lastState = 0;
     }
 
     void _SetVoltage(units::voltage::volt_t voltage)
     {
-        if (voltage != mLastV)
+        if (voltage != mLastV || lastState == 0)
         {
             mLastV = voltage;
             SetVoltage(voltage);
         }
+        lastState = 1;
     }
 };

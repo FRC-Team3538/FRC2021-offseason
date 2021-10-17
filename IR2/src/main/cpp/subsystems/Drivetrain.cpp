@@ -97,7 +97,7 @@ void Drivetrain::Test(double y, double x)
   f1.speed = std::sqrt(std::pow(y, 2) + std::pow(x, 2)) * kMaxSpeedLinear;
   f1.angle = frc::Rotation2d(units::radian_t(std::atan2(-x, y)));
   m_frontLeft.SetModule(f1);
-  std::cout << f1.angle.Degrees().value() << std::endl;
+  //std::cout << f1.angle.Degrees().value() << std::endl;
 }
 
 frc::Rotation2d Drivetrain::GetYaw()

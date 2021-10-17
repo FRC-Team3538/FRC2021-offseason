@@ -25,9 +25,9 @@ void AutoTest::NextState()
 
 void AutoTest::Init()
 {
-    units::feet_per_second_t maxLinearVel = 8_fps;
+    units::feet_per_second_t maxLinearVel = 15_fps;
     // units::standard_gravity_t maxCentripetalAcc = 0.5_SG;
-    units::feet_per_second_squared_t maxLinearAcc = 8_fps_sq;
+    units::feet_per_second_squared_t maxLinearAcc = 15_fps_sq;
 
     // frc::TrajectoryConfig config(Drivetrain::kMaxSpeedLinear, Drivetrain::kMaxAccelerationLinear);
     frc::TrajectoryConfig config(maxLinearVel, maxLinearAcc);
@@ -63,11 +63,11 @@ void AutoTest::Run()
     case 0:
     {
         auto theta = 0.0_deg;
-        auto thetaPrime = 90.0_deg;
+        auto thetaPrime = 180.0_deg;
 
         auto reference = m_trajectory.Sample(m_autoTimer.Get());
 
-        auto yaw = theta + ((thetaPrime - theta)/(m_trajectory.TotalTime() * 0.5) * m_autoTimer.Get());
+        auto yaw = theta + ((thetaPrime - theta)/(m_trajectory.TotalTime() * 0.75) * m_autoTimer.Get());
         yaw = units::math::abs(yaw - theta) > units::math::abs(thetaPrime - theta) ? thetaPrime : yaw;
 
         IO.drivetrain.Drive(reference, yaw);

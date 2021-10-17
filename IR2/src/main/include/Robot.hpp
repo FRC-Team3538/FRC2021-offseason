@@ -4,6 +4,8 @@
 
 #pragma once
 
+#define RPMs (frc::SmartDashboard::GetNumber("RPM", 2750.0))
+
 #include <frc/TimedRobot.h>
 #include "lib/PS4Controller.hpp"
 #include "Robotmap.hpp"
@@ -38,7 +40,12 @@ private:
 
   bool fieldCentric = true;
 
-  // vision::RJVisionPipeline::visionData data;
+  vision::RJVisionPipeline::visionData data;
+  double distance = -1.0;
 
   AutoPrograms autoPrograms{IO};
+
+  bool shooterLocked = false;
+
+  Climber::State climbState = Climber::State::Stowed;
 };

@@ -6,12 +6,32 @@ Shooter::Shooter()
 
 void Shooter::ConfigureMotors()
 {
+    turret.ConfigFactoryDefault();
+    turret.SetSelectedSensorPosition(90 / kScaleFactorTurret);
+    turret.SetInverted(true);
 
+    shooterB.Follow(shooterA);
+
+    shooterA.ConfigFactoryDefault();
+    shooterA.SetInverted(true);
+
+    shooterB.ConfigFactoryDefault();
+    shooterB.SetInverted(false);
+
+    shooterA.Config_kF(0, 0.056494409);
+    shooterA.Config_kP(0, 0.225);
+    shooterA.Config_kI(0, 0.0001);
+    shooterA.Config_kD(0, 6.000);
+
+    shooterA.Config_IntegralZone(0, 200.0);
+
+    turret.SetNeutralMode(ctre::phoenix::motorcontrol::Brake);
 }
 
 void Shooter::UpdateTelemetry()
 {
-    
+    frc::SmartDashboard::PutNumber("Turret Angle", GetTurretAngle().value());
+    frc::SmartDashboard::PutNumber("Shooter Velocity", GetShooterVelocity().value());
 }
 
 /**
@@ -24,6 +44,10 @@ void Shooter::SetFeeder(double speed)
     speed = std::min(speed, 1.0);
     speed = std::max(speed, -1.0);
     feeder._Set(speed);
+    if (std::abs(speed) > 0.0)
+        feed = true;
+    else
+        feed = false;
 }
 
 /**
@@ -33,8 +57,10 @@ void Shooter::SetFeeder(double speed)
  */
 void Shooter::SetTurretAngle(units::degree_t targetAngle)
 {
-    targetAngle = std::min(targetAngle, maxTurretAngle);
-    targetTurretAngle = std::max(targetAngle, minTurretAngle);
+    // targetAngle = std::min(targetAngle, maxTurretAngle);
+    // targetTurretAngle = std::max(targetAngle, minTurretAngle);
+    // targetTurretAngle = 0.0_deg;
+    targetTurretAngle = targetAngle;
 }
 
 /**
@@ -45,6 +71,35 @@ void Shooter::SetTurretAngle(units::degree_t targetAngle)
 void Shooter::SetShooterVelocity(units::revolutions_per_minute_t targetRPM)
 {
     targetShooterVelocity = std::min(targetRPM, maxFlywheelVelocity);
+}
+
+void Shooter::AutoSetVelocity(units::inch_t distance)
+{
+    if (prevDist == distance.value())
+    {
+        SetShooterVelocity(units::revolutions_per_minute_t{prevRPM});
+        return;
+    }
+
+    prevDist = distance.value();
+
+    double rpm = 0.0;
+    for (int i = 0; i < interpolationVals.size(); ++i)
+    {
+        rpm += interpolationVals[i] * std::pow(distance.value(), i);
+    }
+
+    SetShooterVelocity(units::revolutions_per_minute_t{rpm});
+    prevRPM = rpm;
+
+    if (std::abs(GetShooterVelocity().value() - targetShooterVelocity.value()) < 100.0)
+    {
+        SetFeeder(1.0);
+    }
+    else
+    {
+        SetFeeder(0.0);
+    }
 }
 
 void Shooter::SetHood(double speed)
@@ -69,7 +124,7 @@ void Shooter::SetHoodAngle(units::degree_t targetAngle)
  */
 units::degree_t Shooter::GetHoodAngle()
 {
-    double ang = -hoodEncAbs.GetDistance();// + offset;
+    double ang = -hoodEncAbs.GetDistance(); // + offset;
     if (ang < 0 || ang > 120)
     {
         ang = fmod(ang, 144.0);
@@ -81,6 +136,12 @@ units::degree_t Shooter::GetHoodAngle()
     return units::degree_t(ang);
 }
 
+void Shooter::SetTurret(double speed)
+{
+    turret._Set(speed);
+    targetTurretAngle = GetTurretAngle();
+}
+
 /**
  * Returns the current turret angle
  * 
@@ -88,15 +149,18 @@ units::degree_t Shooter::GetHoodAngle()
  */
 units::degree_t Shooter::GetTurretAngle()
 {
-    double ang = -hoodEncAbs.GetDistance();// + offset;
-    if (ang < 0 || ang > 120)
-    {
-        ang = fmod(ang, 144.0);
-    }
-    if (ang < 0)
-    {
-        ang += 144.0;
-    }
+    // double ang = -hoodEncAbs.GetDistance();// + offset;
+    // if (ang < 0 || ang > 120)
+    // {
+    //     ang = fmod(ang, 144.0);
+    // }
+    // if (ang < 0)
+    // {
+    //     ang += 144.0;
+    // }
+    // return units::degree_t(ang);
+
+    double ang = turret.GetSelectedSensorPosition() * kScaleFactorTurret;
     return units::degree_t(ang);
 }
 
@@ -112,4 +176,19 @@ units::revolutions_per_minute_t Shooter::GetShooterVelocity()
 
 void Shooter::Periodic()
 {
+    units::degree_t err = targetTurretAngle - GetTurretAngle();
+    double dVal = (err.value() - prevErr.value()) / 0.02;
+    units::volt_t command = units::volt_t{(err.value() * kP) + (dVal * kD)};
+    //turret._SetVoltage(command);
+    prevErr = err;
+
+    if (!feed)
+        feederSol.Set(true);
+    else
+        feederSol.Set(false);
+
+    if(targetShooterVelocity.value() == 0.0)
+        shooterA.Set(0.0);
+    else
+        shooterA.Set(ControlMode::Velocity, ((targetShooterVelocity.value() / kScaleFactorFly) / 600.0));
 }

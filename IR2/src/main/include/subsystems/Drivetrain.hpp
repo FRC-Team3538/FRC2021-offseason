@@ -185,7 +185,7 @@ private:
     frc::HolonomicDriveController m_trajectoryController{
         frc2::PIDController{2.0, 0.0, 0.0},                      // X-error
         frc2::PIDController{2.0, 0.0, 0.0},                      // Y-error
-        frc::ProfiledPIDController<units::radian>{1.0, 0.0, 0.0, // Rotation-error
+        frc::ProfiledPIDController<units::radian>{2.0, 0.0, 0.0, // Rotation-error
                                                   frc::TrapezoidProfile<units::radian>::Constraints{
                                                       360_deg_per_s,
                                                       720_deg_per_s / 1_s}}};
