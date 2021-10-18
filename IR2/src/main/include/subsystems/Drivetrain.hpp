@@ -36,6 +36,7 @@ public:
     void ResetYaw();
     void ResetOdometry(const frc::Pose2d &pose);
     void UpdateOdometry();
+    void Stop();
 
     void Test(double y, double x);
 

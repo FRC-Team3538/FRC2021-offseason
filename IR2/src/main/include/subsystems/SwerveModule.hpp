@@ -89,6 +89,7 @@ public:
 
     // Module Actions
     void SetModule(const frc::SwerveModuleState &state);
+    void Stop();
 
     // Telemetry / Smartdash
     void InitSendable(frc::SendableBuilder &builder) override;

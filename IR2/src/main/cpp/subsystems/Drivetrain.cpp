@@ -96,6 +96,14 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
   m_backRight.SetModule(br);
 }
 
+void Drivetrain::Stop()
+{
+  m_frontLeft.Stop();
+  m_frontRight.Stop();
+  m_backLeft.Stop();
+  m_backRight.Stop();
+}
+
 void Drivetrain::Test(double y, double x)
 {
   frc::SwerveModuleState f1;

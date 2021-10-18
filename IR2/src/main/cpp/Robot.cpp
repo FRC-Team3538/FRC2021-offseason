@@ -189,7 +189,11 @@ void Robot::SimulationPeriodic()
     IO.drivetrain.SimPeriodic();
 }
 
-void Robot::DisabledInit() {}
+void Robot::DisabledInit() {
+    // Mostly for sim
+    IO.drivetrain.Stop();
+}
+
 void Robot::DisabledPeriodic() {}
 
 void Robot::TestInit() {}

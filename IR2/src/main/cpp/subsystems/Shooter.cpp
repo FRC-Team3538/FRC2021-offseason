@@ -178,7 +178,7 @@ void Shooter::Periodic()
 {
     units::degree_t err = targetTurretAngle - GetTurretAngle();
     double dVal = (err.value() - prevErr.value()) / 0.02;
-    units::volt_t command = units::volt_t{(err.value() * kP) + (dVal * kD)};
+    //units::volt_t command = units::volt_t{(err.value() * kP) + (dVal * kD)};
     //turret._SetVoltage(command);
     prevErr = err;
 

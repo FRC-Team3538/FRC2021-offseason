@@ -1,5 +1,9 @@
 #include "auto/AutoTest.hpp"
 
+#include <frc/Filesystem.h>
+#include <wpi/Path.h>
+#include <wpi/SmallString.h>
+
 // Name for Smart Dash Chooser
 std::string AutoTest::GetName()
 {
@@ -37,7 +41,13 @@ void AutoTest::Init()
     std::vector<frc::Spline<5>::ControlVector> p1;
 
     {
-        io::CSVReader<6> csv("/home/lvuser/deploy/PathWeaver/Paths/Curve.path");
+        wpi::SmallString<256> filePath;
+        frc::filesystem::GetDeployDirectory(filePath);
+        wpi::sys::path::append(filePath, "PathWeaver");
+        wpi::sys::path::append(filePath, "Paths");
+        wpi::sys::path::append(filePath, "Curve.path");
+
+        io::CSVReader<6> csv(filePath.c_str());
         csv.read_header(io::ignore_extra_column | io::ignore_missing_column, "X", "Y", "Tangent X", "Tangent Y", "ddx", "ddy");
         double x, y, dx, dy, ddx = 0, ddy = 0;
         while (csv.read_row(x, y, dx, dy, ddx, ddy))
@@ -80,7 +90,7 @@ void AutoTest::Run()
     }
     default:
     {
-        IO.drivetrain.Drive(units::meters_per_second_t{0.0}, units::meters_per_second_t{0.0}, units::radians_per_second_t{0.0}, false);
+        IO.drivetrain.Stop();
     }
     }
 

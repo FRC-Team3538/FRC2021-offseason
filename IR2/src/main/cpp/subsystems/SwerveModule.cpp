@@ -141,6 +141,25 @@ void SwerveModule::SetModule(const frc::SwerveModuleState &state)
 #endif
 }
 
+/**
+ * Just Stop....
+ *
+ */
+void SwerveModule::Stop()
+{
+  m_drivePIDController.Reset(0_mps);
+  m_turningPIDController.Reset(0_deg);
+
+  m_driveMotor.SetVoltage(0_V);
+  m_turningMotor.SetVoltage(0_V);
+
+  // Simulation
+#ifndef __FRC_ROBORIO__
+  m_driveSim.SetInputVoltage(0_V);
+  m_turnSim.SetInputVoltage(0_V);
+#endif
+}
+
 void SwerveModule::ConfigureMotors()
 {
 }
