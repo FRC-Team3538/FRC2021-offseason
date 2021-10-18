@@ -7,7 +7,7 @@
 #define RPMs (frc::SmartDashboard::GetNumber("RPM", 2750.0))
 
 #include <frc/TimedRobot.h>
-#include "lib/PS4Controller.hpp"
+#include "lib/UniversalController.hpp"
 #include "Robotmap.hpp"
 #include "auto/AutoPrograms.hpp"
 
@@ -29,13 +29,24 @@ public:
   void TestInit() override;
   void TestPeriodic() override;
 
+  void SimulationPeriodic() override;
+
 private:
-  frc::PS4Controller m_driver{0};
-  frc::PS4Controller m_operator{1};
+
+  frc::SendableChooser<frc::UniversalController::ControllerType> m_chooserControllerType;
+  frc::SendableChooser<frc::UniversalController::ControllerType> m_chooserOperatorType;
+  static constexpr auto kControllerTypePS4 = "PS4";
+  static constexpr auto kControllerTypeXbox = "Xbox";
+  static constexpr auto kControllerTypeStadia = "Stadia";
+
+  frc::UniversalController m_driver{0};
+  frc::UniversalController m_operator{1};
 
   Robotmap IO;
 
   double Deadband(double value, double deadband);
+  double smooth_deadband(double value, double deadband, double max);
+
   const double deadbandVal = 0.1;
 
   bool fieldCentric = true;

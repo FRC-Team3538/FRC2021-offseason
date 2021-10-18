@@ -2,10 +2,15 @@
 
 Drivetrain::Drivetrain()
 {
-  m_imu.Reset();
+#ifdef __FRC_ROBORIO__
   m_imu.Calibrate();
+#endif
+  ResetYaw();
 
   m_yawLockPID.EnableContinuousInput(-180, 180);
+
+  // Display Robot position on field
+  frc::SmartDashboard::PutData("Field", &m_fieldDisplay);
 }
 
 void Drivetrain::UpdateTelemetry()
@@ -102,7 +107,11 @@ void Drivetrain::Test(double y, double x)
 
 frc::Rotation2d Drivetrain::GetYaw()
 {
+#ifdef __FRC_ROBORIO__
   return frc::Rotation2d{units::degree_t{m_imu.GetAngle()}};
+#else
+  return m_theta;
+#endif
 }
 
 void Drivetrain::UpdateOdometry()
@@ -123,11 +132,22 @@ void Drivetrain::UpdateOdometry()
                                                   m_frontRight.GetState(),
                                                   m_backLeft.GetState(),
                                                   m_backRight.GetState()});
+
+  auto p = m_odometry.GetPose();
+  frc::Pose2d fliperoo = {-p.Y(), p.X(), p.Rotation().RotateBy(90_deg)}; // Driver Station PoV
+  m_fieldDisplay.SetRobotPose(fliperoo);
 }
 
 void Drivetrain::ResetYaw()
 {
+
+#ifdef __FRC_ROBORIO__
   m_imu.Reset();
+#else
+    // The ADI gyro is not simulator compatible on linux
+    m_theta = 0_rad;
+#endif
+
   m_yawLockPID.SetSetpoint(GetYaw().Degrees().value());
   m_yawLockPID.Reset();
 }
@@ -143,4 +163,76 @@ void Drivetrain::ResetOdometry(const frc::Pose2d &pose)
 units::radians_per_second_t Drivetrain::GetYawRate()
 {
   return units::degrees_per_second_t(m_robotVelocity.omega);
+}
+
+
+void Drivetrain::InitSendable(frc::SendableBuilder &builder)
+{
+  builder.SetSmartDashboardType("DriveBase");
+  builder.SetActuator(true);
+
+  // Modules
+  m_frontLeft.InitSendable(builder, "FL");
+  m_frontRight.InitSendable(builder, "FR");
+  m_backLeft.InitSendable(builder, "BL");
+  m_backRight.InitSendable(builder, "BR");
+
+  // Pose
+  builder.AddDoubleProperty(
+      "poseEstimator/x", [this] { return m_poseEstimator.GetEstimatedPosition().X().value(); }, nullptr);
+  builder.AddDoubleProperty(
+      "poseEstimator/y", [this] { return m_poseEstimator.GetEstimatedPosition().Y().value(); }, nullptr);
+  builder.AddDoubleProperty(
+      "poseEstimator/yaw", [this] { return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees().value(); }, nullptr);
+
+  builder.AddDoubleProperty(
+      "odometry/x", [this] { return m_odometry.GetPose().X().value(); }, nullptr);
+  builder.AddDoubleProperty(
+      "odometry/y", [this] { return m_odometry.GetPose().Y().value(); }, nullptr);
+  builder.AddDoubleProperty(
+      "odometry/yaw", [this] { return m_odometry.GetPose().Rotation().Degrees().value(); }, nullptr);
+
+  // Velocity
+  builder.AddDoubleProperty(
+      "vel/x", [this] { return m_robotVelocity.vx.value(); }, nullptr);
+  builder.AddDoubleProperty(
+      "vel/y", [this] { return m_robotVelocity.vy.value(); }, nullptr);
+  builder.AddDoubleProperty(
+      "vel/yaw", [this] { return units::degrees_per_second_t(m_robotVelocity.omega).value(); }, nullptr);
+
+  // Command
+  builder.AddDoubleProperty(
+      "cmd/x", [this] { return m_command.vx.value(); }, nullptr);
+  builder.AddDoubleProperty(
+      "cmd/y", [this] { return m_command.vy.value(); }, nullptr);
+  builder.AddDoubleProperty(
+      "cmd/yaw", [this] { return units::degrees_per_second_t(m_command.omega).value(); }, nullptr);
+
+  // Heading Lock
+  builder.AddDoubleProperty(
+      "YawPID/kP", [this] { return m_yawLockPID.GetP(); }, [this](double value) { m_yawLockPID.SetP(value); });
+  builder.AddDoubleProperty(
+      "YawPID/kI", [this] { return m_yawLockPID.GetI(); }, [this](double value) { m_yawLockPID.SetI(value); });
+  builder.AddDoubleProperty(
+      "YawPID/kD", [this] { return m_yawLockPID.GetD(); }, [this](double value) { m_yawLockPID.SetD(value); });
+  builder.AddDoubleProperty(
+      "YawPID/SP",
+      [this] { return units::degree_t(m_yawLockPID.GetSetpoint()).value(); }, nullptr);
+
+  // Operating Mode
+  builder.AddBooleanProperty(
+      "cmd/fieldRelative", [this] { return m_fieldRelative; }, nullptr);
+}
+
+void Drivetrain::SimPeriodic()
+{
+  m_frontLeft.SimPeriodic();
+  m_frontRight.SimPeriodic();
+  m_backLeft.SimPeriodic();
+  m_backRight.SimPeriodic();
+
+  // Simulated IMU
+#ifndef __FRC_ROBORIO__
+  m_theta += m_robotVelocity.omega * 20_ms;
+#endif // __FRC_ROBORIO__
 }

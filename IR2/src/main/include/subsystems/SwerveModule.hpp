@@ -22,6 +22,11 @@
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <iostream>
 
+// Simulation
+#include <frc/system/plant/LinearSystemId.h>
+#include "lib/VelocitySystemSim.h"
+#include "lib/PositionSystemSim.h"
+
 struct SwerveModuleDrivePIDConfig
 {
     const double kP;
@@ -63,7 +68,9 @@ struct SwerveModuleConfig
     const SwerveModuleTurnFFConfig turnFf;
 };
 
-class SwerveModule : public Subsystem
+class SwerveModule : public Subsystem, 
+                     public frc::Sendable,
+                     public frc::SendableHelper<SwerveModule>
 {
 public:
     SwerveModule(std::string moduleID, int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel, SwerveModuleConfig config);
@@ -82,6 +89,13 @@ public:
 
     // Module Actions
     void SetModule(const frc::SwerveModuleState &state);
+
+    // Telemetry / Smartdash
+    void InitSendable(frc::SendableBuilder &builder) override;
+    void InitSendable(frc::SendableBuilder &builder, std::string name);
+
+    // Simulation
+    void SimPeriodic();
 
 private:
     frc::SwerveModuleState currentState;
@@ -118,4 +132,35 @@ private:
 
     // Preferences
     frc::Preferences *prefs = frc::Preferences::GetInstance();
+
+
+    //
+    // Simulation
+    //
+    bool m_isSimulation = false;
+    units::volt_t m_driveVolts = 0_V;
+    units::volt_t m_turnVolts = 0_V;
+
+    // Drive
+    frc::LinearSystem<1, 1, 1> m_drivePlant =
+    frc::LinearSystemId::IdentifyVelocitySystem<units::meter>(
+        m_driveFeedforward.kV, 
+        m_driveFeedforward.kA);
+
+    frc::sim::VelocitySystemSim m_driveSim{
+        m_drivePlant,
+        frc::DCMotor::Falcon500(),
+        kDriveGearboxRatio,
+        kWheelRadius};
+
+    // Turn
+    frc::LinearSystem<2, 1, 1> m_turnPlant =
+    frc::LinearSystemId::IdentifyPositionSystem<units::radian>(
+        m_turnFeedforward.kV, 
+        m_turnFeedforward.kA);
+
+    frc::sim::PositionSystemSim m_turnSim{
+        m_turnPlant,
+        frc::DCMotor::BanebotsRS550(),
+        kTurnGearboxRatio};
 };

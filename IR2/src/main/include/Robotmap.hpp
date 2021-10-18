@@ -57,11 +57,6 @@ public:
         ++telemetryCt;
     }
 
-    void ConfigureMotors()
-    {
-        shooter.ConfigureMotors();
-    }
-
 private:
     int telemetryCt = 0;
 };

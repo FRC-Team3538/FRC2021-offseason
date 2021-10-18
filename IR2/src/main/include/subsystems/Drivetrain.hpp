@@ -14,7 +14,9 @@
 #include "adi/ADIS16470_IMU.h"
 #include <cmath>
 
-class Drivetrain : public Subsystem
+class Drivetrain : public Subsystem, 
+                   public frc::Sendable,
+                   public frc::SendableHelper<SwerveModule>
 {
 public:
     Drivetrain();
@@ -41,6 +43,13 @@ public:
     frc::Rotation2d GetYaw();
     units::radians_per_second_t GetYawRate();
 
+    // Telemetry / Smartdash
+    void InitSendable(frc::SendableBuilder &builder) override;
+
+    // Simulation
+    void SimPeriodic();
+
+    // Public config values
     static constexpr units::meters_per_second_t kMaxSpeedLinear = 8_fps; //16
     static constexpr units::radians_per_second_t kMaxSpeedAngular = 360_deg_per_s;
     static constexpr units::meters_per_second_squared_t kMaxAccelerationLinear = units::feet_per_second_squared_t(20.0);
@@ -56,10 +65,16 @@ private:
     frc::Translation2d backLeftLocation{-dist, +dist};
     frc::Translation2d backRightLocation{-dist, -dist};
 
+    
+#ifdef __FRC_ROBORIO__
     frc::ADIS16470_IMU m_imu{
         frc::ADIS16470_IMU::IMUAxis::kZ,
         frc::SPI::Port::kOnboardCS0,
         frc::ADIS16470CalibrationTime::_1s};
+#else
+    // The ADI gyro is not simulator compatible on linux
+    units::radian_t m_theta = 0_rad;
+#endif
 
     // Odomoetry
     frc::Field2d m_fieldDisplay;

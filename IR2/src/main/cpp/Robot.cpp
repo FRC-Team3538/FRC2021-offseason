@@ -4,36 +4,56 @@
 
 #include "Robot.hpp"
 
-double smooth_deadband(double value, double deadband, double max)
-{
-    if (std::abs(value) < deadband)
-    {
-        return 0.0;
-    }
-    else
-    {
-        return (value - deadband) / (max - deadband) * max;
-    }
-}
-
 void Robot::RobotInit()
 {
-    IO.ConfigureMotors();
+    // Controller Type Selection
+    m_chooserControllerType.SetDefaultOption(kControllerTypePS4, frc::UniversalController::ControllerType::kPS4);
+    m_chooserControllerType.AddOption(kControllerTypeXbox, frc::UniversalController::ControllerType::kXbox);
+    m_chooserControllerType.AddOption(kControllerTypeStadia, frc::UniversalController::ControllerType::kStadia);
+    frc::SmartDashboard::PutData("DriverType", &m_chooserControllerType);
+
+    m_chooserOperatorType.SetDefaultOption(kControllerTypePS4, frc::UniversalController::ControllerType::kPS4);
+    m_chooserOperatorType.AddOption(kControllerTypeXbox, frc::UniversalController::ControllerType::kXbox);
+    m_chooserOperatorType.AddOption(kControllerTypeStadia, frc::UniversalController::ControllerType::kStadia);
+    frc::SmartDashboard::PutData("OperatorType", &m_chooserOperatorType);
+
+    // Hardware Init
+    IO.shooter.ConfigureMotors();
+
+    // Subsystems Smartdash
+    frc::SmartDashboard::PutData("Driver", &m_driver);
+    frc::SmartDashboard::PutData("Operator", &m_operator);
+    frc::SmartDashboard::PutData("Drivebase", &IO.drivetrain);
 }
+
 void Robot::RobotPeriodic()
 {
-    //IO.vis.Periodic();
-    frc::SmartDashboard::PutBoolean("Field Centric", fieldCentric);
-    IO.UpdateTelemetry();
-    autoPrograms.SmartDash();
+    // Odometry
     IO.drivetrain.UpdateOdometry();
 
+    // Drive Mode
     if (m_driver.GetOptionsButtonPressed())
         fieldCentric = !fieldCentric;
 
+    // Gyro Reset
     if (m_driver.GetShareButtonPressed())
         IO.drivetrain.ResetYaw();
 
+    // PS4 | xbox | Stadia controller mapping
+    m_driver.SetControllerType(m_chooserControllerType.GetSelected());
+    m_operator.SetControllerType(m_chooserOperatorType.GetSelected());
+
+    // Auto Smartdash
+    autoPrograms.SmartDash();
+
+    // Subsystems Smartdash
+    IO.UpdateTelemetry();
+
+    // Vision Smartdash
+    //IO.vis.Periodic();
+    
+    // robot.cpp Smartdash
+    frc::SmartDashboard::PutBoolean("Field Centric", fieldCentric);
     frc::SmartDashboard::PutNumber("RPM", RPMs);
 }
 
@@ -164,6 +184,11 @@ void Robot::TeleopPeriodic()
     IO.shooter.Periodic();
 }
 
+void Robot::SimulationPeriodic()
+{
+    IO.drivetrain.SimPeriodic();
+}
+
 void Robot::DisabledInit() {}
 void Robot::DisabledPeriodic() {}
 
@@ -187,6 +212,18 @@ double Robot::Deadband(double value, double deadband)
     else
     {
         return value;
+    }
+}
+
+double Robot::smooth_deadband(double value, double deadband, double max)
+{
+    if (std::abs(value) < deadband)
+    {
+        return 0.0;
+    }
+    else
+    {
+        return (value - deadband) / (max - deadband) * max;
     }
 }
 
