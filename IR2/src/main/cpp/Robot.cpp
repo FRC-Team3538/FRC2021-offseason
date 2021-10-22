@@ -18,7 +18,11 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutData("OperatorType", &m_chooserOperatorType);
 
     // Hardware Init
+    IO.climber.ConfigureMotors();
+    IO.drivetrain.ConfigureMotors();
+    IO.intake.ConfigureMotors();
     IO.shooter.ConfigureMotors();
+    IO.spindexer.ConfigureMotors();
 
     // Subsystems Smartdash
     frc::SmartDashboard::PutData("Driver", &m_driver);
