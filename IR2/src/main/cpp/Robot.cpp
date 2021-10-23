@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "Robot.hpp"
+#include "frc/livewindow/LiveWindow.h"
 
 void Robot::RobotInit()
 {
@@ -23,6 +24,9 @@ void Robot::RobotInit()
     IO.intake.ConfigureMotors();
     IO.shooter.ConfigureMotors();
     IO.spindexer.ConfigureMotors();
+
+    frc::LiveWindow::GetInstance()->SetEnabled(false);
+    frc::LiveWindow::GetInstance()->DisableAllTelemetry();
 
     // Subsystems Smartdash
     frc::SmartDashboard::PutData("Driver", &m_driver);

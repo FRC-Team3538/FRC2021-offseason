@@ -220,10 +220,7 @@ void Shooter::Periodic()
     //turret._SetVoltage(command);
     prevErr = err;
 
-    if (!feed)
-        feederSol.Set(true);
-    else
-        feederSol.Set(false);
+    feederSol.Set(feed);
 
     if(targetShooterVelocity.value() == 0.0)
         shooterA.Set(0.0);
