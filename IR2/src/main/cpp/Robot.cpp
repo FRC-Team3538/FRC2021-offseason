@@ -19,11 +19,7 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutData("OperatorType", &m_chooserOperatorType);
 
     // Hardware Init
-    IO.climber.ConfigureMotors();
-    IO.drivetrain.ConfigureMotors();
-    IO.intake.ConfigureMotors();
-    IO.shooter.ConfigureMotors();
-    IO.spindexer.ConfigureMotors();
+    IO.ConfigureMotors();
 
     frc::LiveWindow::GetInstance()->SetEnabled(false);
     frc::LiveWindow::GetInstance()->DisableAllTelemetry();
@@ -31,7 +27,7 @@ void Robot::RobotInit()
     // Subsystems Smartdash
     // frc::SmartDashboard::PutData("Driver", &m_driver);
     // frc::SmartDashboard::PutData("Operator", &m_operator);
-    // frc::SmartDashboard::PutData("Drivebase", &IO.drivetrain);
+    frc::SmartDashboard::PutData("Drivebase", &IO.drivetrain);
 }
 
 void Robot::RobotPeriodic()
@@ -63,25 +59,31 @@ void Robot::RobotPeriodic()
     // robot.cpp Smartdash
     frc::SmartDashboard::PutBoolean("Field Centric", fieldCentric);
     frc::SmartDashboard::PutNumber("RPM", RPMs);
+    frc::SmartDashboard::PutNumber("Target Angle", LEANGLE);
 }
 
 void Robot::AutonomousInit()
 {
     IO.drivetrain.ResetYaw();
     autoPrograms.Init();
+    disabledTimerOS = false;
 }
 void Robot::AutonomousPeriodic()
 {
     autoPrograms.Run();
+    IO.shooter.Periodic();
 }
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit()
+{
+    disabledTimerOS = false;
+}
 void Robot::TeleopPeriodic()
 {
     // DRIVE CODE
     auto forward = -smooth_deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
     auto strafe = -smooth_deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
-    auto rotate = -smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular*0.75;
+    auto rotate = -smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular * 0.75;
 
     //std::cout << forward << ", " << strafe << ", " << rotate << std::endl;
 
@@ -92,20 +94,21 @@ void Robot::TeleopPeriodic()
     double leftTrig = smooth_deadband(m_driver.GetTriggerAxis(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
     double rightTrigop = smooth_deadband(m_operator.GetTriggerAxis(frc::GenericHID::kRightHand), deadbandVal, 1.0);
     double leftTrigop = smooth_deadband(m_operator.GetTriggerAxis(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
-    IO.intake.SetSpeed(leftTrig - Trianglebutton - leftTrigop + rightTrigop);
+    double intakeSpd = leftTrig - Trianglebutton - leftTrigop + rightTrigop;
+    IO.intake.SetSpeed(intakeSpd);
 
     //Deploying and Retracting I
-    bool rightBump = m_driver.GetBumperPressed(frc::GenericHID::kRightHand);
+    bool rightBump = m_driver.GetBumperPressed(frc::GenericHID::kRightHand) ;
     bool leftBump = m_driver.GetBumperPressed(frc::GenericHID::kLeftHand);
     bool rightBumpop = m_operator.GetBumperPressed(frc::GenericHID::kRightHand);
     bool leftBumpop = m_operator.GetBumperPressed(frc::GenericHID::kLeftHand);
 
-    if (rightBump || leftBumpop)
+    if (rightBump || leftBumpop || std::abs(intakeSpd) > deadbandVal)
     {
         IO.intake.SetPosition(Intake::Position::Deployed);
     }
 
-    if (leftBump || rightBumpop)
+    if (leftBump || rightBumpop || std::abs(intakeSpd) < deadbandVal)
     {
         IO.intake.SetPosition(Intake::Position::Stowed);
     }
@@ -130,7 +133,6 @@ void Robot::TeleopPeriodic()
         IO.spindexer.SetState(Spindexer::Idle);
     }
 
-
     // Feeder
     if (m_driver.GetSquareButton())
     {
@@ -145,15 +147,13 @@ void Robot::TeleopPeriodic()
         IO.shooter.SetFeeder(0.0);
     }
 
-
     // Turret
     double manualTurret = -smooth_deadband(m_operator.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0);
     IO.shooter.SetTurret(manualTurret);
 
-    
     // Hood
     double manualHood = smooth_deadband(m_operator.GetY(frc::GenericHID::kRightHand), deadbandVal, 1.0);
-    hoodpos += manualHood*0.02;
+    hoodpos += manualHood * 0.02;
     if (hoodpos > 1.0)
     {
         hoodpos = 1.0;
@@ -162,31 +162,37 @@ void Robot::TeleopPeriodic()
     {
         hoodpos = 0.0;
     }
-    
-    if (m_operator.GetUpButton())
+
+    if (m_operator.GetUpButton()) // TRIANGLE SHOT
     {
-        hoodpos = 0.0;
+        hoodpos = 0.80; //.93
+        IO.shooter.SetShooterVelocity(3250_rpm);
     }
-    else if (m_operator.GetDownButton())
+    else if (m_operator.GetDownButton()) // GENERATOR LEG
     {
         hoodpos = 1.0;
+        IO.shooter.SetShooterVelocity(3250_rpm);
     }
-    else if (m_operator.GetLeftButton())
+    else if (m_operator.GetLeftButton()) // INIT SHOT
     {
-        hoodpos = 0.75;
+        hoodpos = 0.15;
+        IO.shooter.SetShooterVelocity(3250_rpm);
     }
-    else if (m_operator.GetRightButton())
+    else if (m_operator.GetRightButton()) // TRENCH SHOT
     {
-        hoodpos = 0.25;
+        hoodpos = 0.16;
+        IO.shooter.SetShooterVelocity(3250_rpm);
     }
     else if (m_operator.GetShareButton())
     {
         hoodpos = 1.0;
     }
+    else if (m_operator.GetTouchPadButton())
+        hoodpos = LEANGLE;
+
     IO.shooter.SetHood(hoodpos);
 
     frc::SmartDashboard::PutNumber("HoodPos", hoodpos);
-
 
     //Flywheel
     if (m_operator.GetCircleButton())
@@ -198,7 +204,6 @@ void Robot::TeleopPeriodic()
         IO.shooter.SetShooterVelocity(0_rpm);
     }
 
-   
     // CLIMBER CODE
     if (m_operator.GetSquareButtonPressed())
     {
@@ -211,11 +216,10 @@ void Robot::TeleopPeriodic()
     double telescopes = smooth_deadband(m_operator.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
     IO.climber.SetClimber(telescopes);
 
-
-    // JESUS 
+    // JESUS
     if (m_operator.GetOptionsButtonPressed())
     {
-          Jesus.Set(!Jesus.Get());
+        Jesus.Set(!Jesus.Get());
     }
 
     IO.shooter.Periodic();
@@ -232,9 +236,21 @@ void Robot::DisabledInit()
     IO.drivetrain.Stop();
 
     IO.intake.SetPosition(Intake::Position::Stowed);
-    IO.climber.SetClimberPosition(Climber::State::Stowed);
+    IO.climber.SetClimberPosition(Climber::State::Deployed);
     IO.shooter.SetShooterVelocity(0_rpm);
     hoodpos = 1.0;
+
+    if (!disabledTimerOS)
+    {
+        disabledTimer.Reset();
+        disabledTimer.Start();
+        disabledTimerOS = true;
+    }
+
+    if (disabledTimer.Get() > 5_s)
+    {
+
+    }
 }
 
 void Robot::DisabledPeriodic() {}

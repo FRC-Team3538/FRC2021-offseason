@@ -36,6 +36,7 @@
 #include <units/acceleration.h>
 #include <units/temperature.h>
 #include <units/time.h>
+#include <units/math.h>
 
 // Utilities
 #include "lib/LazyTalonFX.hpp"
@@ -45,6 +46,7 @@
 #include <cmath>
 #include <vector>
 #include <frc/Solenoid.h>
+#include <frc/smartdashboard/SendableChooser.h>
 
 class Shooter : public Subsystem
 {
@@ -61,7 +63,7 @@ public:
     // Setters
     void SetFeeder(double speed);
     void SetTurretAngle(units::degree_t targetAngle);
-    void SetShooterVelocity(units::revolutions_per_minute_t targetRPM);
+    bool SetShooterVelocity(units::revolutions_per_minute_t targetRPM);
     void AutoSetVelocity(units::inch_t distance);
     void SetHood(double speed);
     void SetHoodAngle(units::degree_t targetAngle);
@@ -95,8 +97,8 @@ private:
     static constexpr units::revolutions_per_minute_t maxFlywheelVelocity = 5500_rpm;
     static constexpr units::degree_t maxHoodAngle = 70_deg;
     static constexpr units::degree_t minHoodAngle = 15_deg;
-    static constexpr units::degree_t maxTurretAngle = 50_deg;
-    static constexpr units::degree_t minTurretAngle = 140_deg;
+    static constexpr units::degree_t maxTurretAngle = 90_deg;
+    static constexpr units::degree_t minTurretAngle = units::degree_t{-90.0};
     static constexpr units::degree_t hoodZeroAngle = 0_deg;
     
     double kScaleFactorTurret = 332.0 / ((555.0 / 11.0) * 2048.0); // Degrees / (Ratio * Ticks per Rev)
@@ -114,7 +116,7 @@ private:
     frc::DutyCycleEncoder turretEncAbs{1};
 
     units::degree_t targetHoodAngle = 0.0_deg;
-    units::degree_t targetTurretAngle = 90.0_deg;
+    units::degree_t targetTurretAngle = 0.0_deg;
     units::revolutions_per_minute_t targetShooterVelocity = 0.0_rpm;
 
     double kP = 0.175;
@@ -128,4 +130,6 @@ private:
     double prevRPM = -1.0;
 
     bool feed = false;
+
+    frc::SendableChooser<std::string> toggleTurretLimits;
 };

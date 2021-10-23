@@ -7,11 +7,15 @@ Shooter::Shooter()
 void Shooter::ConfigureMotors()
 {
     turret.ConfigFactoryDefault();
-    turret.SetSelectedSensorPosition(90 / kScaleFactorTurret);
+    turret.SetSelectedSensorPosition(0.0); //90 / kScaleFactorTurret);
     turret.SetInverted(true);
     turret.SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
     turret.ConfigPeakOutputForward(0.2);
     turret.ConfigPeakOutputReverse(-0.2);
+    turret.ConfigForwardSoftLimitThreshold(-180.0 / kScaleFactorTurret);
+    turret.ConfigReverseSoftLimitThreshold(0.0);
+    turret.ConfigForwardSoftLimitEnable(true);
+    turret.ConfigReverseSoftLimitEnable(true);
 
     shooterB.Follow(shooterA);
 
@@ -69,6 +73,23 @@ void Shooter::UpdateTelemetry()
 {
     frc::SmartDashboard::PutNumber("Turret Angle", GetTurretAngle().value());
     frc::SmartDashboard::PutNumber("Shooter Velocity", GetShooterVelocity().value());
+
+    toggleTurretLimits.SetDefaultOption("Enabled", "Enabled");
+    toggleTurretLimits.AddOption("Disabled", "Disabled");
+    if (toggleTurretLimits.GetSelected() == "Enabled")
+    {
+        turret.ConfigForwardSoftLimitEnable(true);
+        turret.ConfigReverseSoftLimitEnable(true);
+    }
+    else if (toggleTurretLimits.GetSelected() == "Disabled")
+    {
+        turret.ConfigForwardSoftLimitEnable(false);
+        turret.ConfigReverseSoftLimitEnable(false);
+    }
+
+    frc::SmartDashboard::PutData("Turret Limits", &toggleTurretLimits);
+    std::string name = toggleTurretLimits.GetSelected();
+    frc::SmartDashboard::PutString("Turret Limits", name);
 }
 
 /**
@@ -105,9 +126,11 @@ void Shooter::SetTurretAngle(units::degree_t targetAngle)
  * 
  * @param targetRPM The target flywheel velocity constrained by the min and max
  */
-void Shooter::SetShooterVelocity(units::revolutions_per_minute_t targetRPM)
+bool Shooter::SetShooterVelocity(units::revolutions_per_minute_t targetRPM)
 {
     targetShooterVelocity = std::min(targetRPM, maxFlywheelVelocity);
+
+    return (units::math::abs(targetShooterVelocity - GetShooterVelocity()) < 100_rpm);
 }
 
 void Shooter::AutoSetVelocity(units::inch_t distance)
@@ -121,7 +144,7 @@ void Shooter::AutoSetVelocity(units::inch_t distance)
     prevDist = distance.value();
 
     double rpm = 0.0;
-    for (int i = 0; i < interpolationVals.size(); ++i)
+    for (size_t i = 0; i < interpolationVals.size(); ++i)
     {
         rpm += interpolationVals[i] * std::pow(distance.value(), i);
     }
@@ -161,6 +184,8 @@ void Shooter::SetHoodAngle(units::degree_t targetAngle)
 {
     targetAngle = std::min(targetAngle, maxHoodAngle);
     targetHoodAngle = std::max(targetAngle, minHoodAngle);
+
+    //return (units::math::abs(targetHoodAngle - GetHoodAngle()) < 1.5_deg);
 }
 
 /**
@@ -230,7 +255,7 @@ void Shooter::Periodic()
 
     feederSol.Set(feed);
 
-    if(targetShooterVelocity.value() == 0.0)
+    if (targetShooterVelocity.value() == 0.0)
         shooterA.Set(0.0);
     else
         shooterA.Set(ControlMode::Velocity, ((targetShooterVelocity.value() / kScaleFactorFly) / 600.0));

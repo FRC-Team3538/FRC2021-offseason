@@ -5,6 +5,7 @@
 #pragma once
 
 #define RPMs (frc::SmartDashboard::GetNumber("RPM", 2750.0))
+#define LEANGLE (frc::SmartDashboard::GetNumber("Target Angle", 0.0))
 
 #include <frc/TimedRobot.h>
 #include "lib/UniversalController.hpp"
@@ -62,4 +63,7 @@ private:
   frc::Solenoid Jesus{7};
   
   double hoodpos = 1.0;
+
+  frc2::Timer disabledTimer;
+  bool disabledTimerOS = false;
 };

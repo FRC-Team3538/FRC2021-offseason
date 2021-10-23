@@ -13,6 +13,7 @@
 #include <frc/geometry/Translation2d.h>
 #include "adi/ADIS16470_IMU.h"
 #include <cmath>
+#include <frc/smartdashboard/SendableChooser.h>
 
 class Drivetrain : public Subsystem, 
                    public frc::Sendable,
@@ -168,6 +169,8 @@ private:
     // Heading Lock
     bool m_YawLockActive = true;
     frc2::PIDController m_yawLockPID{5.0, 0.0, 0.1};
+    frc::SendableChooser<std::string> yawLock;
+    bool yawLockEnabled = true;
 
     // Odometry
     frc::SwerveDriveKinematics<4> m_kinematics{

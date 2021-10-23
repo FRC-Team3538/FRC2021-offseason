@@ -23,6 +23,21 @@ void Drivetrain::UpdateTelemetry()
   frc::SmartDashboard::PutNumber("Yaw", GetYaw().Degrees().value());
   frc::SmartDashboard::PutBoolean("Yaw Lock", m_YawLockActive);
 
+  yawLock.SetDefaultOption("Enabled", "Enabled");
+  yawLock.AddOption("Disabled", "Disabled");
+  if (yawLock.GetSelected() == "Enabled")
+  {
+    yawLockEnabled = true;
+  }
+  else if (yawLock.GetSelected() == "Disabled")
+  {
+    yawLockEnabled = false;
+  }
+
+  frc::SmartDashboard::PutData("Yaw Lock PID", &yawLock);
+  std::string name = yawLock.GetSelected();
+  frc::SmartDashboard::PutString("Yaw Lock PID", name);
+
   frc::SmartDashboard::PutNumber("Odometry X", m_odometry.GetPose().X().value());
 }
 
@@ -62,7 +77,7 @@ void Drivetrain::Drive(units::meters_per_second_t xSpeed,
   else if (units::math::abs(rot) < noRotThreshold && units::math::abs(GetYawRate()) < 30_deg_per_s)
   {
     // Wait for the robot to stop spinning to enable Yaw Lock
-    m_YawLockActive = true;
+    m_YawLockActive = yawLockEnabled; //true
   }
 
   if (m_YawLockActive)
@@ -156,8 +171,8 @@ void Drivetrain::ResetYaw()
 #ifdef __FRC_ROBORIO__
   m_imu.Reset();
 #else
-    // The ADI gyro is not simulator compatible on linux
-    m_theta = 0_rad;
+  // The ADI gyro is not simulator compatible on linux
+  m_theta = 0_rad;
 #endif
 
   m_yawLockPID.SetSetpoint(GetYaw().Degrees().value());
@@ -177,7 +192,6 @@ units::radians_per_second_t Drivetrain::GetYawRate()
   return units::degrees_per_second_t(m_robotVelocity.omega);
 }
 
-
 void Drivetrain::InitSendable(frc::SendableBuilder &builder)
 {
   builder.SetSmartDashboardType("DriveBase");
@@ -188,6 +202,8 @@ void Drivetrain::InitSendable(frc::SendableBuilder &builder)
   m_frontRight.InitSendable(builder, "FR");
   m_backLeft.InitSendable(builder, "BL");
   m_backRight.InitSendable(builder, "BR");
+
+  m_yawLockPID.InitSendable(builder);
 
   // Pose
   builder.AddDoubleProperty(
