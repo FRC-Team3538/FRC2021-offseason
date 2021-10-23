@@ -141,6 +141,14 @@ void Shooter::AutoSetVelocity(units::inch_t distance)
 
 void Shooter::SetHood(double position)
 {
+    if (position > 1.0)
+    {
+        position = 1.0;
+    }
+    else if (position < 0.2)
+    {
+        position = 0.2;
+    }
     hoodA.Set(position);
 }
 

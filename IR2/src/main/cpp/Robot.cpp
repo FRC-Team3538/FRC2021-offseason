@@ -29,9 +29,9 @@ void Robot::RobotInit()
     frc::LiveWindow::GetInstance()->DisableAllTelemetry();
 
     // Subsystems Smartdash
-    frc::SmartDashboard::PutData("Driver", &m_driver);
-    frc::SmartDashboard::PutData("Operator", &m_operator);
-    frc::SmartDashboard::PutData("Drivebase", &IO.drivetrain);
+    // frc::SmartDashboard::PutData("Driver", &m_driver);
+    // frc::SmartDashboard::PutData("Operator", &m_operator);
+    // frc::SmartDashboard::PutData("Drivebase", &IO.drivetrain);
 }
 
 void Robot::RobotPeriodic()
@@ -81,7 +81,7 @@ void Robot::TeleopPeriodic()
     // DRIVE CODE
     auto forward = -smooth_deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
     auto strafe = -smooth_deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
-    auto rotate = -smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular;
+    auto rotate = -smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular*0.75;
 
     //std::cout << forward << ", " << strafe << ", " << rotate << std::endl;
 
@@ -112,16 +112,16 @@ void Robot::TeleopPeriodic()
 
     //Spindexer
     bool shoot = m_driver.GetTriggerAxis(frc::GenericHID::kRightHand) || m_operator.GetTriangleButton();
-    double spindexer = smooth_deadband(m_operator.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
+    double spindexer = smooth_deadband(m_operator.GetX(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
     if (m_driver.GetCircleButton())
     {
         IO.spindexer.SetState(Spindexer::Reverse);
     }
     else if (shoot)
     {
-        IO.spindexer.SetState(Spindexer::F_A_S_T);
+        IO.spindexer.SetState(Spindexer::Feed);
     }
-    else if (abs(spindexer) > deadbandVal)
+    else if (abs(spindexer) > 0.0)
     {
         IO.spindexer.Set(spindexer);
     }
@@ -134,7 +134,7 @@ void Robot::TeleopPeriodic()
     // Feeder
     if (m_driver.GetSquareButton())
     {
-        IO.shooter.SetFeeder(-1.0);
+        IO.shooter.SetFeeder(-0.5);
     }
     else if (shoot)
     {
@@ -147,44 +147,46 @@ void Robot::TeleopPeriodic()
 
 
     // Turret
-    double manualTurret = smooth_deadband(m_operator.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    double manualTurret = -smooth_deadband(m_operator.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0);
     IO.shooter.SetTurret(manualTurret);
 
     
     // Hood
-    static double hoodpos = 0;
+    static double hoodpos = 1.0;
     double manualHood = smooth_deadband(m_operator.GetY(frc::GenericHID::kRightHand), deadbandVal, 1.0);
     hoodpos += manualHood*0.02;
-    if (manualHood > 1.0)
+    if (hoodpos > 1.0)
     {
-        manualHood = 1.0;
+        hoodpos = 1.0;
     }
-    else if (manualHood < 0.0)
+    else if (hoodpos < 0.0)
     {
-        manualHood = 0.0;
+        hoodpos = 0.0;
     }
     
     if (m_operator.GetUpButton())
     {
-        hoodpos = 1.0;
+        hoodpos = 0.0;
     }
     else if (m_operator.GetDownButton())
     {
-        hoodpos = 0.0;
+        hoodpos = 1.0;
     }
     else if (m_operator.GetLeftButton())
     {
-        hoodpos = 0.25;
+        hoodpos = 0.75;
     }
     else if (m_operator.GetRightButton())
     {
-        hoodpos = 0.75;
+        hoodpos = 0.25;
     }
     else if (m_operator.GetShareButton())
     {
-        hoodpos = 0.0;
+        hoodpos = 1.0;
     }
     IO.shooter.SetHood(hoodpos);
+
+    frc::SmartDashboard::PutNumber("HoodPos", hoodpos);
 
 
     //Flywheel
