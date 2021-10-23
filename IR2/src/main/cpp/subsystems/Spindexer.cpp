@@ -43,6 +43,11 @@ void Spindexer::SetState(State state)
             break;
         }
 
+        case State::Reverse:
+        {
+            spindexerMotor._Set(0.5);
+            break;
+        }
         case State::Custom:
         {
             spindexerMotor._SetVoltage(units::volt_t{VOLTAGE});

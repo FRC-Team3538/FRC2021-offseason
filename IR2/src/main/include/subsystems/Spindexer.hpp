@@ -14,6 +14,7 @@ public:
         Idle = 0,
         Feed,
         F_A_S_T,
+        Reverse,
         Custom
     };
 

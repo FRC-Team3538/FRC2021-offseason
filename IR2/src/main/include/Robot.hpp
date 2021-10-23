@@ -10,6 +10,7 @@
 #include "lib/UniversalController.hpp"
 #include "Robotmap.hpp"
 #include "auto/AutoPrograms.hpp"
+#include <frc/Solenoid.h>
 
 class Robot : public frc::TimedRobot
 {
@@ -58,5 +59,5 @@ private:
 
   bool shooterLocked = false;
 
-  Climber::State climbState = Climber::State::Stowed;
+  frc::Solenoid Jesus{7};
 };

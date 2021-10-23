@@ -9,6 +9,9 @@ void Shooter::ConfigureMotors()
     turret.ConfigFactoryDefault();
     turret.SetSelectedSensorPosition(90 / kScaleFactorTurret);
     turret.SetInverted(true);
+    turret.SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
+    turret.ConfigPeakOutputForward(0.2);
+    turret.ConfigPeakOutputReverse(-0.2);
 
     shooterB.Follow(shooterA);
 
@@ -44,7 +47,7 @@ void Shooter::SetFeeder(double speed)
     speed = std::min(speed, 1.0);
     speed = std::max(speed, -1.0);
     feeder._Set(speed);
-    if (std::abs(speed) > 0.0)
+    if (std::abs(speed) > 0.05)
         feed = true;
     else
         feed = false;
@@ -102,8 +105,9 @@ void Shooter::AutoSetVelocity(units::inch_t distance)
     }
 }
 
-void Shooter::SetHood(double speed)
+void Shooter::SetHood(double position)
 {
+    hoodA.Set(position);
 }
 
 /**

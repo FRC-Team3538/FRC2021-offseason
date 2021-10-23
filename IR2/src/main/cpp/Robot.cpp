@@ -51,7 +51,7 @@ void Robot::RobotPeriodic()
 
     // Vision Smartdash
     //IO.vis.Periodic();
-    
+
     // robot.cpp Smartdash
     frc::SmartDashboard::PutBoolean("Field Centric", fieldCentric);
     frc::SmartDashboard::PutNumber("RPM", RPMs);
@@ -80,105 +80,133 @@ void Robot::TeleopPeriodic()
     IO.drivetrain.Drive(forward, strafe, rotate, fieldCentric);
 
     // INTAKE CODE
-    double rightTrig = smooth_deadband(m_driver.GetTriggerAxis(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    double Trianglebutton = m_driver.GetTriangleButton();
     double leftTrig = smooth_deadband(m_driver.GetTriggerAxis(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
+    double rightTrigop = smooth_deadband(m_operator.GetTriggerAxis(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    double leftTrigop = smooth_deadband(m_operator.GetTriggerAxis(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
+    IO.intake.SetSpeed(leftTrig - Trianglebutton - leftTrigop + rightTrigop);
 
+    //Deploying and Retracting I
     bool rightBump = m_driver.GetBumperPressed(frc::GenericHID::kRightHand);
     bool leftBump = m_driver.GetBumperPressed(frc::GenericHID::kLeftHand);
+    bool rightBumpop = m_operator.GetBumperPressed(frc::GenericHID::kRightHand);
+    bool leftBumpop = m_operator.GetBumperPressed(frc::GenericHID::kLeftHand);
 
-    if (rightBump)
+    if (rightBump || leftBumpop)
     {
         IO.intake.SetPosition(Intake::Position::Deployed);
     }
 
-    if (leftBump)
+    if (leftBump || rightBumpop)
     {
         IO.intake.SetPosition(Intake::Position::Stowed);
     }
 
-    if (m_operator.GetTriangleButton())
+    //Spindexer
+    bool shoot = m_driver.GetTriggerAxis(frc::GenericHID::kRightHand) || m_operator.GetTriangleButton();
+    double spindexer = smooth_deadband(m_operator.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
+    if (m_driver.GetCircleButton())
     {
-        IO.shooter.SetShooterVelocity(units::revolutions_per_minute_t{RPMs});
-        if (std::abs(IO.shooter.GetShooterVelocity().value() - RPMs) < 200.0)
-        {
-            IO.shooter.SetFeeder(0.5);
-            IO.spindexer.SetState(Spindexer::Feed);
-        }
+        IO.spindexer.SetState(Spindexer::Reverse);
+    }
+    else if (shoot)
+    {
+        IO.spindexer.SetState(Spindexer::F_A_S_T);
+    }
+    else if (abs(spindexer) > deadbandVal)
+    {
+        IO.spindexer.Set(spindexer);
     }
     else
     {
         IO.spindexer.SetState(Spindexer::Idle);
-        IO.shooter.SetFeeder(0.0);
-        IO.shooter.SetShooterVelocity(units::revolutions_per_minute_t{0.0});
     }
 
-    IO.intake.SetSpeed(-leftTrig + rightTrig);
 
+    // Feeder
+    if (m_driver.GetSquareButton())
+    {
+        IO.shooter.SetFeeder(-1.0);
+    }
+    else if (shoot)
+    {
+        IO.shooter.SetFeeder(0.5);
+    }
+    else
+    {
+        IO.shooter.SetFeeder(0.0);
+    }
+
+
+    // Turret
+    double manualTurret = smooth_deadband(m_operator.GetY(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    IO.shooter.SetTurret(manualTurret);
+
+    
+    // Hood
+    static double hoodpos = 0;
+    double manualHood = smooth_deadband(m_operator.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    hoodpos += manualHood*0.02;
+    if (manualHood > 1.0)
+    {
+        manualHood = 1.0;
+    }
+    else if (manualHood < 0.0)
+    {
+        manualHood = 0.0;
+    }
+    
+    if (m_operator.GetUpButton())
+    {
+        hoodpos = 1.0;
+    }
+    else if (m_operator.GetDownButton())
+    {
+        hoodpos = 0.0;
+    }
+    else if (m_operator.GetLeftButton())
+    {
+        hoodpos = 0.25;
+    }
+    else if (m_operator.GetRightButton())
+    {
+        hoodpos = 0.75;
+    }
+    else if (m_operator.GetShareButton())
+    {
+        hoodpos = 0.0;
+    }
+    IO.shooter.SetHood(hoodpos);
+
+
+    //Flywheel
+    if (m_operator.GetCircleButton())
+    {
+        IO.shooter.SetShooterVelocity(units::revolutions_per_minute_t{RPMs});
+    }
+    else if (m_operator.GetCrossButton())
+    {
+        IO.shooter.SetShooterVelocity(0_rpm);
+    }
+
+   
     // CLIMBER CODE
-
     if (m_operator.GetSquareButtonPressed())
     {
-        climbState = Climber::State::Deployed;
+        IO.climber.SetClimberPosition(Climber::State::Stowed);
     }
-    else if (m_operator.GetCircleButtonPressed())
+    else if (m_operator.GetPSButtonPressed())
     {
-        climbState = Climber::State::Stowed;
+        IO.climber.SetClimberPosition(Climber::State::Deployed);
     }
+    double telescopes = smooth_deadband(m_operator.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
+    IO.climber.SetClimber(telescopes);
 
-    if (climbState == Climber::State::Deployed)
-    {
-        // IO.shooter.SetTurretAngle(units::degree_t{0.0});
-        // if (std::abs(IO.shooter.GetTurretAngle().value()) < 4.0)
-        // {
-        IO.climber.SetClimberPosition(climbState);
-        //}
-    }
-    else
-    {
-        IO.climber.SetClimberPosition(climbState);
-    }
 
-    int pov = m_operator.GetPOV();
-
-    if (pov == 0)
+    // JESUS 
+    if (m_operator.GetOptionsButtonPressed())
     {
-        IO.climber.SetClimber(1.0);
-    }
-    else if (pov == 180)
-    {
-        IO.climber.SetClimber(-1.0);
-    }
-    else
-    {
-        IO.climber.SetClimber(0.0);
-    }
-
-    // SHOOTER CODE
-
-    if (true && (climbState == Climber::State::Stowed))
-    {
-        // data = IO.vis.Run();
-        // if (data.filled)
-        // {
-        //     if ((std::abs(data.angle) < 0.5) && !shooterLocked)
-        //     {
-        //         distance = data.distance;
-        //         shooterLocked = true;
-        //     }
-        //     else if (shooterLocked)
-        //     {
-        //         IO.shooter.AutoSetVelocity(units::inch_t{distance});
-        //     }
-        //     else
-        //     {
-        //         IO.shooter.SetTurretAngle(IO.shooter.GetTurretAngle() - units::degree_t{data.angle});
-        //     }
-        // }
-    }
-    else
-    {
-        shooterLocked = false;
-        IO.shooter.SetTurretAngle(units::degree_t{0.0});
+          Jesus.Set(!Jesus.Get());
     }
 
     IO.shooter.Periodic();
@@ -189,7 +217,8 @@ void Robot::SimulationPeriodic()
     IO.drivetrain.SimPeriodic();
 }
 
-void Robot::DisabledInit() {
+void Robot::DisabledInit()
+{
     // Mostly for sim
     IO.drivetrain.Stop();
 }
