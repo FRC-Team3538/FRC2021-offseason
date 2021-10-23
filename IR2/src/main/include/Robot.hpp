@@ -60,4 +60,6 @@ private:
   bool shooterLocked = false;
 
   frc::Solenoid Jesus{7};
+  
+  double hoodpos = 1.0;
 };

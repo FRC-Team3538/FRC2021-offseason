@@ -152,7 +152,6 @@ void Robot::TeleopPeriodic()
 
     
     // Hood
-    static double hoodpos = 1.0;
     double manualHood = smooth_deadband(m_operator.GetY(frc::GenericHID::kRightHand), deadbandVal, 1.0);
     hoodpos += manualHood*0.02;
     if (hoodpos > 1.0)
@@ -231,6 +230,11 @@ void Robot::DisabledInit()
 {
     // Mostly for sim
     IO.drivetrain.Stop();
+
+    IO.intake.SetPosition(Intake::Position::Stowed);
+    IO.climber.SetClimberPosition(Climber::State::Stowed);
+    IO.shooter.SetShooterVelocity(0_rpm);
+    hoodpos = 1.0;
 }
 
 void Robot::DisabledPeriodic() {}
