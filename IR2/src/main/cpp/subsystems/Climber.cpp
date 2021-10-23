@@ -50,13 +50,13 @@ void Climber::SetClimberPosition(State state)
     {
         case State::Stowed:
         {
-            climbPiston.Set(false);
+            climbPiston.Set(true);
             break;
         }
 
         case State::Deployed:
         {
-            climbPiston.Set(true);
+            climbPiston.Set(false);
             break;
         }
     }

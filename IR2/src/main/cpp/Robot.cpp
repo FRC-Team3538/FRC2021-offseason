@@ -147,13 +147,13 @@ void Robot::TeleopPeriodic()
 
 
     // Turret
-    double manualTurret = smooth_deadband(m_operator.GetY(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    double manualTurret = smooth_deadband(m_operator.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0);
     IO.shooter.SetTurret(manualTurret);
 
     
     // Hood
     static double hoodpos = 0;
-    double manualHood = smooth_deadband(m_operator.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    double manualHood = smooth_deadband(m_operator.GetY(frc::GenericHID::kRightHand), deadbandVal, 1.0);
     hoodpos += manualHood*0.02;
     if (manualHood > 1.0)
     {
