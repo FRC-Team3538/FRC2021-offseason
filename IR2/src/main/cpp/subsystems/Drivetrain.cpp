@@ -28,6 +28,10 @@ void Drivetrain::UpdateTelemetry()
 
 void Drivetrain::ConfigureMotors()
 {
+  m_frontLeft.ConfigureMotors();
+  m_frontRight.ConfigureMotors();
+  m_backLeft.ConfigureMotors();
+  m_backRight.ConfigureMotors();
 }
 
 void Drivetrain::Drive(frc::Trajectory::State trajectoryState, units::radian_t yaw)
