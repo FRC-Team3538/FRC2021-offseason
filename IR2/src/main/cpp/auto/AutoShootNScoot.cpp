@@ -92,7 +92,11 @@ void AutoShootNScoot::Run()
             if (shootOS && (m_autoTimer.Get() > (spinupTime + 1_s)))
             {
                 IO.shooter.SetFeeder(0.6);
-                IO.spindexer.SetState(Spindexer::State::Feed);
+                if (m_autoTimer.Get() > 3_s && m_autoTimer.Get() < 3.5_s) {
+                    IO.spindexer.SetState(Spindexer::State::Reverse);
+                } else {
+                    IO.spindexer.SetState(Spindexer::State::Feed);
+                }
             }
         }
         else
