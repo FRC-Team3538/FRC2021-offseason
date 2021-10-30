@@ -27,12 +27,47 @@ SwerveModule::SwerveModule(std::string moduleID, int driveMotorChannel, int turn
   m_driveMotor.ConfigSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, kDriveMotorCurrentLimit.value(), kDriveMotorCurrentLimit.value(), 0.0));
   m_driveMotor.SetSensorPhase(false);
 
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_1_General, 250, 50);
+  // m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_2_Feedback0, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_4_AinTempVbat, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_6_Misc, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_7_CommStatus, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_9_MotProfBuffer, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_Targets, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_12_Feedback1, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_14_Turn_PIDF1, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_15_FirmareApiStatus, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_17_Targets1, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_3_Quadrature, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_8_PulseWidth, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_11_UartGadgeteer, 250, 50);
+  m_driveMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_Brushless_Current, 250, 50);
+
   // Turning Motor Configuration
   m_turningMotor.ConfigFactoryDefault();
   m_turningMotor.SetStatusFramePeriod(ctre::phoenix::motorcontrol::StatusFrameEnhanced::Status_3_Quadrature, 18);
   m_turningMotor.SetInverted(false); // Remember: forward-positive!
   m_turningMotor.SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
   m_turningMotor.ConfigSupplyCurrentLimit(SupplyCurrentLimitConfiguration(true, kTurningMotorCurrentLimit.value(), kTurningMotorCurrentLimit.value(), 0.0));
+
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_1_General, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_2_Feedback0, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_4_AinTempVbat, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_6_Misc, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_7_CommStatus, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_9_MotProfBuffer, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_10_Targets, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_12_Feedback1, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_13_Base_PIDF0, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_14_Turn_PIDF1, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_15_FirmareApiStatus, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_17_Targets1, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_3_Quadrature, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_8_PulseWidth, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_11_UartGadgeteer, 250, 50);
+  m_turningMotor.SetStatusFramePeriod(StatusFrameEnhanced::Status_Brushless_Current, 250, 50);
+
 
   // Turning Encoder Config
   ctre::phoenix::sensors::CANCoderConfiguration encoderConfig;
