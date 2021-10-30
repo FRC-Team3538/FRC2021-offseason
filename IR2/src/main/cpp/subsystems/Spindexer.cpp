@@ -80,5 +80,5 @@ void Spindexer::SetState(State state)
 
 void Spindexer::Set(double speed)
 {
-    spindexerMotor.Set(speed);
+    spindexerMotor._Set(speed);
 }
