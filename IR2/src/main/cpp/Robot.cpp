@@ -124,7 +124,7 @@ void Robot::TeleopPeriodic()
     {
         IO.spindexer.SetState(Spindexer::Feed);
     }
-    else if (abs(spindexer) > 0.0)
+    else if (std::abs(spindexer) > 0.0)
     {
         IO.spindexer.Set(spindexer);
     }
@@ -284,9 +284,12 @@ double Robot::smooth_deadband(double value, double deadband, double max)
     {
         return 0.0;
     }
+    else if (value > deadband) {
+        return (value - deadband) / (max - deadband) * max;
+    } 
     else
     {
-        return (value - deadband) / (max - deadband) * max;
+        return (value + deadband) / (max - deadband) * max;
     }
 }
 
