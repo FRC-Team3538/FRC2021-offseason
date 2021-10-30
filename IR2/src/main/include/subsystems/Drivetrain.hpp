@@ -52,7 +52,7 @@ public:
     void SimPeriodic();
 
     // Public config values
-    static constexpr units::meters_per_second_t kMaxSpeedLinear = 8_fps; //16
+    static constexpr units::meters_per_second_t kMaxSpeedLinear = 16_fps;
     static constexpr units::radians_per_second_t kMaxSpeedAngular = 360_deg_per_s;
     static constexpr units::meters_per_second_squared_t kMaxAccelerationLinear = units::feet_per_second_squared_t(20.0);
     static constexpr units::inch_t kWheelToWheel = 22_in;
