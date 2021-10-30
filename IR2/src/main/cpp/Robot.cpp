@@ -118,18 +118,22 @@ void Robot::TeleopPeriodic()
     double spindexer = smooth_deadband(m_operator.GetX(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
     if (m_driver.GetCircleButton())
     {
+        std::cout << frc::Timer::GetFPGATimestamp() << " Spindexer::Reverse" << std::endl;
         IO.spindexer.SetState(Spindexer::Reverse);
     }
     else if (shoot)
     {
+        std::cout << frc::Timer::GetFPGATimestamp() << " Spindexer::Feed" << std::endl;
         IO.spindexer.SetState(Spindexer::Feed);
     }
     else if (abs(spindexer) > 0.0)
     {
+        std::cout << frc::Timer::GetFPGATimestamp() << " Spindexer::Operator" << std::endl;
         IO.spindexer.Set(spindexer);
     }
     else
     {
+        std::cout << frc::Timer::GetFPGATimestamp() << " Spindexer::Idle" << std::endl;
         IO.spindexer.SetState(Spindexer::Idle);
     }
 
