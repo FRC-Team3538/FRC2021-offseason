@@ -75,7 +75,7 @@ ADIS16470_IMU::ADIS16470_IMU(IMUAxis yaw_axis, SPI::Port port, ADIS16470Calibrat
   // Set data ready polarity (HIGH = Good Data), Disable gSense Compensation and PoP
   WriteRegister(MSC_CTRL, 0x0001);
   // Configure IMU internal Bartlett filter
-  WriteRegister(FILT_CTRL, 0x0000);
+  WriteRegister(FILT_CTRL, 0x0004);
   // Configure continuous bias calibration time based on user setting
   WriteRegister(NULL_CNFG, m_calibration_time | 0x700);
 
