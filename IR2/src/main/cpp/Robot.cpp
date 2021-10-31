@@ -25,7 +25,7 @@ void Robot::RobotInit()
     frc::LiveWindow::GetInstance()->DisableAllTelemetry();
 
     // Subsystems Smartdash
-    // frc::SmartDashboard::PutData("Driver", &m_driver);
+    frc::SmartDashboard::PutData("Driver", &m_driver);
     // frc::SmartDashboard::PutData("Operator", &m_operator);
     frc::SmartDashboard::PutData("Drivebase", &IO.drivetrain);
 }
@@ -35,6 +35,8 @@ void Robot::RobotPeriodic()
     // Odometry
     IO.drivetrain.UpdateOdometry();
 
+    if (m_driver.IsConnected())
+    {
     // Drive Mode
     if (m_driver.GetOptionsButtonPressed())
         fieldCentric = !fieldCentric;
@@ -42,6 +44,7 @@ void Robot::RobotPeriodic()
     // Gyro Reset
     if (m_driver.GetShareButtonPressed())
         IO.drivetrain.ResetYaw();
+    }
 
     // PS4 | xbox | Stadia controller mapping
     m_driver.SetControllerType(m_chooserControllerType.GetSelected());
