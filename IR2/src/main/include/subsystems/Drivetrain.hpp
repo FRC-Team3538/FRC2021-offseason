@@ -11,7 +11,7 @@
 #include <frc/controller/HolonomicDriveController.h>
 #include "Subsystem.hpp"
 #include <frc/geometry/Translation2d.h>
-#include "adi/ADIS16470_IMU.h"
+#include "lib/adi/ADIS16470_IMU.h"
 #include <cmath>
 #include <frc/smartdashboard/SendableChooser.h>
 

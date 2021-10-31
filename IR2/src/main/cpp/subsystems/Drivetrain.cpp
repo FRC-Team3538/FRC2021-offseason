@@ -203,8 +203,10 @@ void Drivetrain::InitSendable(frc::SendableBuilder &builder)
   m_backLeft.InitSendable(builder, "BL");
   m_backRight.InitSendable(builder, "BR");
 
-  m_yawLockPID.InitSendable(builder);
+  // m_yawLockPID.InitSendable(builder);
 
+  builder.AddDoubleProperty("gyro", [this] { return m_imu.GetAngle(); }, nullptr);
+  
   // Pose
   builder.AddDoubleProperty(
       "poseEstimator/x", [this] { return m_poseEstimator.GetEstimatedPosition().X().value(); }, nullptr);
