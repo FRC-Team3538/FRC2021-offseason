@@ -74,7 +74,7 @@ private:
         frc::SPI::Port::kOnboardCS0,
         frc::ADIS16470CalibrationTime::_1s};
 
-    ctre::phoenix::sensors::PigeonIMU alt_imu{19};
+    //ctre::phoenix::sensors::PigeonIMU alt_imu{19};
 #else
     // The ADI gyro is not simulator compatible on linux
     units::radian_t m_theta = 0_rad;

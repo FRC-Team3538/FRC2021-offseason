@@ -5,7 +5,7 @@ Drivetrain::Drivetrain()
 #ifdef __FRC_ROBORIO__
   m_imu.Calibrate();
 
-  alt_imu.ConfigFactoryDefault();
+  //alt_imu.ConfigFactoryDefault();
 #endif
   ResetYaw();
 
@@ -138,7 +138,7 @@ frc::Rotation2d Drivetrain::GetYaw()
 {
 #ifdef __FRC_ROBORIO__
   double ypr[3];
-  alt_imu.GetYawPitchRoll(ypr);
+  //alt_imu.GetYawPitchRoll(ypr);
   return frc::Rotation2d{units::degree_t{m_imu.GetAngle()}};
 
 #else
@@ -211,9 +211,9 @@ void Drivetrain::InitSendable(frc::SendableBuilder &builder)
   // m_yawLockPID.InitSendable(builder);
 
   builder.AddDoubleProperty("gyro", [this] { return m_imu.GetAngle(); }, nullptr);
-  builder.AddDoubleProperty("pigeon/yaw", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[0]; }, nullptr);
-  builder.AddDoubleProperty("pigeon/pitch", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[1]; }, nullptr);
-  builder.AddDoubleProperty("pigeon/roll", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[2]; }, nullptr);
+  //builder.AddDoubleProperty("pigeon/yaw", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[0]; }, nullptr);
+  //builder.AddDoubleProperty("pigeon/pitch", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[1]; }, nullptr);
+  //builder.AddDoubleProperty("pigeon/roll", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[2]; }, nullptr);
   
   // Pose
   builder.AddDoubleProperty(
