@@ -76,8 +76,6 @@ ADIS16470_IMU::ADIS16470_IMU(IMUAxis yaw_axis, SPI::Port port, ADIS16470Calibrat
   WriteRegister(MSC_CTRL, 0x0001);
   // Configure IMU internal Bartlett filter
   WriteRegister(FILT_CTRL, 0x0000);
-  WriteRegister(GLOB_CMD, 0x0008);
-  Wait(2.0);
   // Configure continuous bias calibration time based on user setting
   WriteRegister(NULL_CNFG, m_calibration_time | 0x700);
 
@@ -89,6 +87,8 @@ ADIS16470_IMU::ADIS16470_IMU(IMUAxis yaw_axis, SPI::Port port, ADIS16470Calibrat
 
   // Write offset calibration command to IMU
   WriteRegister(GLOB_CMD, 0x0001);
+  WriteRegister(GLOB_CMD, 0x0008);
+  Wait(2.0);
 
   // Configure and enable auto SPI
   if(!SwitchToAutoSPI()) {
