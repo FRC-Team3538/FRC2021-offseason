@@ -17,7 +17,7 @@
 #include <frc/DigitalSource.h>
 #include <frc/DriverStation.h>
 #include <frc/ErrorBase.h>
-#include <frc/smartdashboard/SendableBuilder.h>
+#include <wpi/sendable/SendableBuilder.h>
 #include <frc/Timer.h>
 #include <frc/WPIErrors.h>
 #include <hal/HAL.h>
