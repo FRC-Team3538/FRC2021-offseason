@@ -5,6 +5,7 @@
 #include "lib/VelocitySystemSim.h"
 #include <units/length.h>
 
+#include <wpi/numbers>
 #include <wpi/MathExtras.h>
 
 #include "frc/system/plant/LinearSystemId.h"
@@ -32,7 +33,7 @@ units::ampere_t VelocitySystemSim::GetCurrentDraw() const
   // is spinning 10x faster than the output.
 
   // rad/sec = (meter/sec) * (radian/meter)
-  auto c = 2_rad / (2 * m_wheelRadius * wpi::math::pi);
+  auto c = 2_rad / (2 * m_wheelRadius * wpi::numbers::pi);
 
   return m_gearbox.Current(
              GetVelocity() * c * m_gearing,
@@ -42,5 +43,5 @@ units::ampere_t VelocitySystemSim::GetCurrentDraw() const
 
 void VelocitySystemSim::SetInputVoltage(units::volt_t voltage)
 {
-  SetInput(frc::MakeMatrix<1, 1>(voltage.to<double>()));
+  SetInput(Eigen::Matrix<double, 1, 1>(voltage.to<double>()));
 }

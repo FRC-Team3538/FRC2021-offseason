@@ -21,8 +21,8 @@ void Robot::RobotInit()
     // Hardware Init
     IO.ConfigureMotors();
 
-    frc::LiveWindow::GetInstance()->SetEnabled(false);
-    frc::LiveWindow::GetInstance()->DisableAllTelemetry();
+    frc::LiveWindow::SetEnabled(false);
+    frc::LiveWindow::DisableAllTelemetry();
 
     // Subsystems Smartdash
     frc::SmartDashboard::PutData("Driver", &m_driver);
@@ -84,9 +84,9 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
     // DRIVE CODE
-    auto forward = -smooth_deadband(m_driver.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
-    auto strafe = -smooth_deadband(m_driver.GetX(frc::GenericHID::kLeftHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
-    auto rotate = -smooth_deadband(m_driver.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular * 0.75;
+    auto forward = -smooth_deadband(m_driver.GetLeftY(), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
+    auto strafe = -smooth_deadband(m_driver.GetLeftX(), deadbandVal, 1.0) * Drivetrain::kMaxSpeedLinear;
+    auto rotate = -smooth_deadband(m_driver.GetRightX(), deadbandVal, 1.0) * Drivetrain::kMaxSpeedAngular * 0.75;
 
     //std::cout << forward << ", " << strafe << ", " << rotate << std::endl;
 
@@ -94,17 +94,17 @@ void Robot::TeleopPeriodic()
 
     // INTAKE CODE
     double Trianglebutton = m_driver.GetTriangleButton();
-    double leftTrig = smooth_deadband(m_driver.GetTriggerAxis(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
-    double rightTrigop = smooth_deadband(m_operator.GetTriggerAxis(frc::GenericHID::kRightHand), deadbandVal, 1.0);
-    double leftTrigop = smooth_deadband(m_operator.GetTriggerAxis(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
+    double leftTrig = smooth_deadband(m_driver.GetLeftTriggerAxis(), deadbandVal, 1.0);
+    double rightTrigop = smooth_deadband(m_operator.GetRightTriggerAxis(), deadbandVal, 1.0);
+    double leftTrigop = smooth_deadband(m_operator.GetLeftTriggerAxis(), deadbandVal, 1.0);
     double intakeSpd = leftTrig - Trianglebutton - leftTrigop + rightTrigop;
     IO.intake.SetSpeed(intakeSpd);
 
     //Deploying and Retracting I
-    bool rightBump = m_driver.GetBumperPressed(frc::GenericHID::kRightHand) ;
-    bool leftBump = m_driver.GetBumperPressed(frc::GenericHID::kLeftHand);
-    bool rightBumpop = m_operator.GetBumperPressed(frc::GenericHID::kRightHand);
-    bool leftBumpop = m_operator.GetBumperPressed(frc::GenericHID::kLeftHand);
+    bool rightBump = m_driver.GetRightBumperPressed() ;
+    bool leftBump = m_driver.GetLeftBumperPressed();
+    bool rightBumpop = m_operator.GetRightBumperPressed();
+    bool leftBumpop = m_operator.GetLeftBumperPressed();
 
     if (rightBump || leftBumpop || std::abs(intakeSpd) > deadbandVal)
     {
@@ -117,8 +117,8 @@ void Robot::TeleopPeriodic()
     }
 
     //Spindexer
-    bool shoot = m_driver.GetTriggerAxis(frc::GenericHID::kRightHand) || m_operator.GetTriangleButton();
-    double spindexer = smooth_deadband(m_operator.GetX(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
+    bool shoot = m_driver.GetRightTriggerAxis() || m_operator.GetTriangleButton();
+    double spindexer = smooth_deadband(m_operator.GetLeftX(), deadbandVal, 1.0);
     if (m_driver.GetCircleButton())
     {
         IO.spindexer.SetState(Spindexer::Reverse);
@@ -151,11 +151,11 @@ void Robot::TeleopPeriodic()
     }
 
     // Turret
-    double manualTurret = -smooth_deadband(m_operator.GetX(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    double manualTurret = -smooth_deadband(m_operator.GetRightX(), deadbandVal, 1.0);
     IO.shooter.SetTurret(manualTurret);
 
     // Hood
-    double manualHood = smooth_deadband(m_operator.GetY(frc::GenericHID::kRightHand), deadbandVal, 1.0);
+    double manualHood = smooth_deadband(m_operator.GetRightY(), deadbandVal, 1.0);
     hoodpos += manualHood * 0.02;
     if (hoodpos > 1.0)
     {
@@ -216,7 +216,7 @@ void Robot::TeleopPeriodic()
     {
         IO.climber.SetClimberPosition(Climber::State::Deployed);
     }
-    double telescopes = smooth_deadband(m_operator.GetY(frc::GenericHID::kLeftHand), deadbandVal, 1.0);
+    double telescopes = smooth_deadband(m_operator.GetLeftY(), deadbandVal, 1.0);
     IO.climber.SetClimber(telescopes);
 
     // JESUS

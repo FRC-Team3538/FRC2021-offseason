@@ -23,7 +23,7 @@ private:
 
     double estDist = 0.0;
 
-	std::shared_ptr<NetworkTable> table;
+	std::shared_ptr<nt::NetworkTable> table;
 	double dy, dx, tv;
 	frc::Timer lightOn;
 

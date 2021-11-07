@@ -135,7 +135,7 @@ void Shooter::SetFeeder(double speed)
 {
     speed = std::min(speed, 1.0);
     speed = std::max(speed, -1.0);
-    feeder._Set(speed);
+    feeder.Set(speed);
     if (std::abs(speed) > 0.05)
         feed = true;
     else
@@ -243,7 +243,7 @@ units::degree_t Shooter::GetHoodAngle()
 
 void Shooter::SetTurret(double speed)
 {
-    turret._Set(speed);
+    turret.Set(speed);
     targetTurretAngle = GetTurretAngle();
 }
 

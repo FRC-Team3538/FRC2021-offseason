@@ -2,7 +2,7 @@
 
 // Utilities
 #include "Subsystem.hpp"
-#include "lib/LazyTalonFX.hpp"
+#include <ctre/Phoenix.h>
 #include <frc/Solenoid.h>
 
 // **** INTAKE CLASS ****
@@ -38,7 +38,7 @@ private:
     double currentSpeed = 0.0;
     Position currentPosition = Position::Stowed;
 
-    LazyTalonFX intakeMotor{8};
+    WPI_TalonFX intakeMotor{8};
 
-    frc::Solenoid deployPiston{0};
+    frc::Solenoid deployPiston{frc::PneumaticsModuleType::CTREPCM, 0};
 };

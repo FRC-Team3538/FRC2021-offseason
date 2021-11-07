@@ -21,8 +21,8 @@ using namespace frc;
  */
 UniversalController::UniversalController(int port) : GenericHID(port),
                                                      xb_{port},
-                                                     ps_{port}//,
-//                                                      stadia_{port}
+                                                     ps_{port},
+                                                     stadia_{port}
 {
   HAL_Report(HALUsageReporting::kResourceType_Joystick, port);
 }
@@ -51,7 +51,7 @@ double UniversalController::GetLeftX() const
   case ControllerType::kPS4:
     return ps_.GetLeftX();
   case ControllerType::kStadia:
-//     return stadia_.GetLeftX();
+    return stadia_.GetLeftX();
   default:
     return 0.0;
   }
@@ -71,7 +71,7 @@ double UniversalController::GetLeftY() const
   case ControllerType::kPS4:
     return ps_.GetLeftY();
   case ControllerType::kStadia:
-//     return stadia_.GetY(hand);
+    return stadia_.GetLeftY();
   default:
     return 0.0;
   }
@@ -91,7 +91,67 @@ double UniversalController::GetLeftTriggerAxis() const
   case ControllerType::kPS4:
     return ps_.GetL2Axis();
   case ControllerType::kStadia:
-//     return stadia_.GetTriggerAxis(hand);
+    return stadia_.GetLeftTriggerAxis();
+  default:
+    return 0.0;
+  }
+}
+
+/**
+ * Get the X axis value of the controller.GenericHID::JoystickHand::kLeftHand
+ *
+ * @param hand Side of controller whose value should be returned.
+ */
+double UniversalController::GetRightX() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightX();
+  case ControllerType::kPS4:
+    return ps_.GetRightX();
+  case ControllerType::kStadia:
+    return stadia_.GetRightX();
+  default:
+    return 0.0;
+  }
+}
+
+/**
+ * Get the Y axis value of the controller.
+ *
+ * @param hand Side of controller whose value should be returned.
+ */
+double UniversalController::GetRightY() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightY();
+  case ControllerType::kPS4:
+    return ps_.GetRightY();
+  case ControllerType::kStadia:
+    return stadia_.GetRightY();
+  default:
+    return 0.0;
+  }
+}
+
+/**
+ * Get the trigger axis value of the controller.
+ *
+ * @param hand Side of controller whose value should be returned.
+ */
+double UniversalController::GetRightTriggerAxis() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightTriggerAxis();
+  case ControllerType::kPS4:
+    return ps_.GetR2Axis();
+  case ControllerType::kStadia:
+    return stadia_.GetRightTriggerAxis();
   default:
     return 0.0;
   }
@@ -111,7 +171,7 @@ bool UniversalController::GetLeftBumper() const
   case ControllerType::kPS4:
     return ps_.GetL1Button();
   case ControllerType::kStadia:
-//     return stadia_.GetBumper(hand);
+    return stadia_.GetLeftBumper();
   default:
     return false;
   }
@@ -132,7 +192,7 @@ bool UniversalController::GetLeftBumperPressed()
   case ControllerType::kPS4:
     return ps_.GetL1ButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetBumperPressed(hand);
+    return stadia_.GetLeftBumperPressed();
   default:
     return false;
   }
@@ -153,7 +213,69 @@ bool UniversalController::GetLeftBumperReleased()
   case ControllerType::kPS4:
     return ps_.GetL1ButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetBumperReleased(hand);
+    return stadia_.GetLeftBumperReleased();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Read the value of the bumper button on the controller.
+ *
+ * @param hand Side of controller whose value should be returned.
+ */
+bool UniversalController::GetRightBumper() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightBumper();
+  case ControllerType::kPS4:
+    return ps_.GetR1Button();
+  case ControllerType::kStadia:
+    return stadia_.GetRightBumper();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Whether the bumper was pressed since the last check.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return Whether the button was pressed since the last check.
+ */
+bool UniversalController::GetRightBumperPressed()
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightBumperPressed();
+  case ControllerType::kPS4:
+    return ps_.GetR1ButtonPressed();
+  case ControllerType::kStadia:
+    return stadia_.GetRightBumperPressed();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Whether the bumper was released since the last check.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return Whether the button was released since the last check.
+ */
+bool UniversalController::GetRightBumperReleased()
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightBumperReleased();
+  case ControllerType::kPS4:
+    return ps_.GetR1ButtonReleased();
+  case ControllerType::kStadia:
+    return stadia_.GetRightBumperReleased();
   default:
     return false;
   }
@@ -174,7 +296,7 @@ bool UniversalController::GetLeftStickButton() const
   case ControllerType::kPS4:
     return ps_.GetL3Button();
   case ControllerType::kStadia:
-//     return stadia_.GetStickButton(hand);
+    return stadia_.GetLeftStickButton();
   default:
     return false;
   }
@@ -195,7 +317,7 @@ bool UniversalController::GetLeftStickButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetL3ButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetStickButtonPressed(hand);
+    return stadia_.GetLeftStickButtonPressed();
   default:
     return false;
   }
@@ -216,7 +338,70 @@ bool UniversalController::GetLeftStickButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetL3ButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetStickButtonReleased(hand);
+    return stadia_.GetLeftStickButtonReleased();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Read the value of the stick button on the controller.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return The state of the button.
+ */
+bool UniversalController::GetRightStickButton() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightStickButton();
+  case ControllerType::kPS4:
+    return ps_.GetR3Button();
+  case ControllerType::kStadia:
+    return stadia_.GetRightStickButton();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Whether the stick button was pressed since the last check.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return Whether the button was pressed since the last check.
+ */
+bool UniversalController::GetRightStickButtonPressed()
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightStickButtonPressed();
+  case ControllerType::kPS4:
+    return ps_.GetR3ButtonPressed();
+  case ControllerType::kStadia:
+    return stadia_.GetRightStickButtonPressed();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Whether the stick button was released since the last check.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return Whether the button was released since the last check.
+ */
+bool UniversalController::GetRightStickButtonReleased()
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightStickButtonReleased();
+  case ControllerType::kPS4:
+    return ps_.GetR3ButtonReleased();
+  case ControllerType::kStadia:
+    return stadia_.GetRightStickButtonReleased();
   default:
     return false;
   }
@@ -236,7 +421,7 @@ bool UniversalController::GetCrossButton() const
   case ControllerType::kPS4:
     return ps_.GetCrossButton();
   case ControllerType::kStadia:
-//     return stadia_.GetAButton();
+    return stadia_.GetAButton();
   default:
     return false;
   }
@@ -256,7 +441,7 @@ bool UniversalController::GetCrossButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetCrossButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetAButtonPressed();
+    return stadia_.GetAButtonPressed();
   default:
     return false;
   }
@@ -276,7 +461,7 @@ bool UniversalController::GetCrossButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetCrossButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetAButtonReleased();
+    return stadia_.GetAButtonReleased();
   default:
     return false;
   }
@@ -296,7 +481,7 @@ bool UniversalController::GetCircleButton() const
   case ControllerType::kPS4:
     return ps_.GetCircleButton();
   case ControllerType::kStadia:
-//     return stadia_.GetBButton();
+    return stadia_.GetBButton();
   default:
     return false;
   }
@@ -316,7 +501,7 @@ bool UniversalController::GetCircleButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetCircleButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetBButtonPressed();
+    return stadia_.GetBButtonPressed();
   default:
     return false;
   }
@@ -336,7 +521,7 @@ bool UniversalController::GetCircleButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetCircleButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetBButtonReleased();
+    return stadia_.GetBButtonReleased();
   default:
     return false;
   }
@@ -356,7 +541,7 @@ bool UniversalController::GetSquareButton() const
   case ControllerType::kPS4:
     return ps_.GetSquareButton();
   case ControllerType::kStadia:
-//     return stadia_.GetXButton();
+    return stadia_.GetXButton();
   default:
     return false;
   }
@@ -376,7 +561,7 @@ bool UniversalController::GetSquareButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetSquareButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetXButtonPressed();
+    return stadia_.GetXButtonPressed();
   default:
     return false;
   }
@@ -396,7 +581,7 @@ bool UniversalController::GetSquareButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetSquareButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetXButtonReleased();
+    return stadia_.GetXButtonReleased();
   default:
     return false;
   }
@@ -416,7 +601,7 @@ bool UniversalController::GetTriangleButton() const
   case ControllerType::kPS4:
     return ps_.GetTriangleButton();
   case ControllerType::kStadia:
-//     return stadia_.GetYButton();
+    return stadia_.GetYButton();
   default:
     return false;
   }
@@ -436,7 +621,7 @@ bool UniversalController::GetTriangleButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetTriangleButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetYButtonPressed();
+    return stadia_.GetYButtonPressed();
   default:
     return false;
   }
@@ -456,7 +641,7 @@ bool UniversalController::GetTriangleButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetTriangleButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetYButtonReleased();
+    return stadia_.GetYButtonReleased();
   default:
     return false;
   }
@@ -477,7 +662,7 @@ bool UniversalController::GetShareButton() const
   case ControllerType::kPS4:
     return ps_.GetShareButton();
   case ControllerType::kStadia:
-//     return stadia_.GetOptionsButton();
+    return stadia_.GetOptionsButton();
   default:
     return false;
   }
@@ -497,7 +682,7 @@ bool UniversalController::GetShareButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetShareButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetOptionsButtonPressed();
+    return stadia_.GetOptionsButtonPressed();
   default:
     return false;
   }
@@ -517,7 +702,7 @@ bool UniversalController::GetShareButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetShareButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetOptionsButtonReleased();
+    return stadia_.GetOptionsButtonReleased();
   default:
     return false;
   }
@@ -538,7 +723,7 @@ bool UniversalController::GetOptionsButton() const
   case ControllerType::kPS4:
     return ps_.GetOptionsButton();
   case ControllerType::kStadia:
-//     return stadia_.GetMenuButton();
+    return stadia_.GetMenuButton();
   default:
     return false;
   }
@@ -558,7 +743,7 @@ bool UniversalController::GetOptionsButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetOptionsButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetMenuButtonPressed();
+    return stadia_.GetMenuButtonPressed();
   default:
     return false;
   }
@@ -578,7 +763,7 @@ bool UniversalController::GetOptionsButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetOptionsButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetMenuButtonReleased();
+    return stadia_.GetMenuButtonReleased();
   default:
     return false;
   }
@@ -599,7 +784,7 @@ bool UniversalController::GetPSButton() const
   case ControllerType::kPS4:
     return ps_.GetPSButton();
   case ControllerType::kStadia:
-//     return stadia_.GetStadiaButton();
+    return stadia_.GetStadiaButton();
   default:
     return false;
   }
@@ -619,7 +804,7 @@ bool UniversalController::GetPSButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetPSButtonPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetStadiaButtonPressed();
+    return stadia_.GetStadiaButtonPressed();
   default:
     return false;
   }
@@ -639,7 +824,7 @@ bool UniversalController::GetPSButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetPSButtonReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetStadiaButtonReleased();
+    return stadia_.GetStadiaButtonReleased();
   default:
     return false;
   }
@@ -660,7 +845,7 @@ bool UniversalController::GetTouchPadButton() const
   case ControllerType::kPS4:
     return ps_.GetTouchpad();
   case ControllerType::kStadia:
-//     return stadia_.GetCaptureButton();
+    return stadia_.GetCaptureButton();
   default:
     return false;
   }
@@ -680,7 +865,7 @@ bool UniversalController::GetTouchPadButtonPressed()
   case ControllerType::kPS4:
     return ps_.GetTouchpadPressed();
   case ControllerType::kStadia:
-//     return stadia_.GetCaptureButtonPressed();
+    return stadia_.GetCaptureButtonPressed();
   default:
     return false;
   }
@@ -700,7 +885,7 @@ bool UniversalController::GetTouchPadButtonReleased()
   case ControllerType::kPS4:
     return ps_.GetTouchpadReleased();
   case ControllerType::kStadia:
-//     return stadia_.GetCaptureButtonReleased();
+    return stadia_.GetCaptureButtonReleased();
   default:
     return false;
   }

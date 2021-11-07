@@ -60,10 +60,10 @@ private:
 
   bool shooterLocked = false;
 
-  frc::Solenoid Jesus{7};
+  frc::Solenoid Jesus{frc::PneumaticsModuleType::CTREPCM, 7};
   
   double hoodpos = 1.0;
 
-  frc2::Timer disabledTimer;
+  frc::Timer disabledTimer;
   bool disabledTimerOS = false;
 };

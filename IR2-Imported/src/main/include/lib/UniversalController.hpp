@@ -10,7 +10,7 @@
 #include <frc/GenericHID.h>
 #include <frc/XboxController.h>
 #include <frc/PS4Controller.h>
-// #include "lib/StadiaController.hpp"
+#include "lib/StadiaController.hpp"
 
 #include <wpi/sendable/Sendable.h>
 #include <wpi/sendable/SendableBuilder.h>
@@ -117,7 +117,7 @@ namespace frc
 
     XboxController xb_;
     PS4Controller ps_;
-//     StadiaController stadia_;
+    StadiaController stadia_;
   };
 
 } // namespace frc

@@ -32,7 +32,7 @@ void Climber::ConfigureMotors()
 
 void Climber::SetClimber(double speed)
 {
-    climb._Set(speed);
+    climb.Set(speed);
 
     // if(std::abs(speed) > 0.0)
     // {

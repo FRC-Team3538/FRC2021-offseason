@@ -28,7 +28,7 @@ private:
 
     // State Variables
     int m_state;
-    frc2::Timer m_autoTimer;
+    frc::Timer m_autoTimer;
 
     void NextState();
 

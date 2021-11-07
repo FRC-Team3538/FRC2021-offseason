@@ -35,13 +35,13 @@ namespace vision
 
         RJVisionPipeline::visionData telemetry;
 
-        if (((pipeSwitch.Get() < 1.0) && pipeSwitchOS))
+        if (((pipeSwitch.Get() < 1.0_s) && pipeSwitchOS))
         {
             telemetry.angle = 420.0;
             telemetry.distance = -1.0;
             telemetry.filled = false;
         }
-        else if ((pipeSwitch.Get() > 1.0 || !pipeSwitchOS) && (lightOn.Get() > 0.5))
+        else if ((pipeSwitch.Get() > 1.0_s || !pipeSwitchOS) && (lightOn.Get() > 0.5_s))
         {
             if (tv == 1.0)
             {

@@ -76,7 +76,7 @@ void Intake::SetSpeed(double speed)
 
     currentSpeed = speed;
 
-    intakeMotor._Set(speed);
+    intakeMotor.Set(speed);
 }
 
 /**
