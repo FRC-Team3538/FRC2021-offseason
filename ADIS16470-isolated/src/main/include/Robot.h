@@ -30,8 +30,8 @@ class Robot : public frc::TimedRobot {
   const std::string kAutoNameCustom = "My Auto";
   std::string m_autoSelected;
 
-  frc::ADIS16470_IMU m_imu{
-      frc::ADIS16470_IMU::IMUAxis::kZ,
-      frc::SPI::Port::kOnboardCS0,
-      frc::ADIS16470CalibrationTime::_1s};
+  // frc::ADIS16470_IMU m_imu{
+  //     frc::ADIS16470_IMU::IMUAxis::kZ,
+  //     frc::SPI::Port::kOnboardCS0,
+  //     frc::ADIS16470CalibrationTime::_1s};
 };
