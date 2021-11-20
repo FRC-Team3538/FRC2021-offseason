@@ -1,7 +1,7 @@
 #pragma once
 
 // Utilities
-#include "lib/LazyTalonFX.hpp"
+#include <ctre/Phoenix.h>
 #include "frc/smartdashboard/SmartDashboard.h"
 
 #define VOLTAGE (frc::SmartDashboard::GetNumber("Spindexer Target Voltage", 0.0))
@@ -32,7 +32,7 @@ public:
     void Set(double speed);
 
 private:
-    LazyTalonFX spindexerMotor{9};
+    WPI_TalonFX spindexerMotor{9};
 
     static constexpr int kEncoderResolution = 2048;
     static constexpr double kGearboxRatio = 37.5;

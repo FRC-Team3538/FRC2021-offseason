@@ -44,41 +44,41 @@ void Spindexer::SetState(State state)
     {
         case State::Idle:
         {
-            spindexerMotor._Set(-0.15);
+            spindexerMotor.Set(-0.15);
             break;
         }
 
         case State::Feed:
         {
-            spindexerMotor._Set(-0.5);
+            spindexerMotor.Set(-0.5);
             break;
         }
 
         case State::F_A_S_T:
         {
-            spindexerMotor._Set(1.0);
+            spindexerMotor.Set(1.0);
             break;
         }
 
         case State::Reverse:
         {
-            spindexerMotor._Set(0.5);
+            spindexerMotor.Set(0.5);
             break;
         }
         case State::Custom:
         {
-            spindexerMotor._SetVoltage(units::volt_t{VOLTAGE});
+            spindexerMotor.SetVoltage(units::volt_t{VOLTAGE});
             break;
         }
 
         default:
         {
-            spindexerMotor._Set(0.0);
+            spindexerMotor.Set(0.0);
         }
     }
 }
 
 void Spindexer::Set(double speed)
 {
-    spindexerMotor._Set(speed);
+    spindexerMotor.Set(speed);
 }

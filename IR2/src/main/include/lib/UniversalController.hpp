@@ -9,12 +9,12 @@
 
 #include <frc/GenericHID.h>
 #include <frc/XboxController.h>
-#include "lib/PS4Controller.hpp"
+#include <frc/PS4Controller.h>
 #include "lib/StadiaController.hpp"
 
-#include <frc/smartdashboard/Sendable.h>
-#include <frc/smartdashboard/SendableBuilder.h>
-#include <frc/smartdashboard/SendableHelper.h>
+#include <wpi/sendable/Sendable.h>
+#include <wpi/sendable/SendableBuilder.h>
+#include <wpi/sendable/SendableHelper.h>
 
 namespace frc
 {
@@ -26,8 +26,8 @@ namespace frc
  * TODO: Support other controller APIs as well?
  */
   class UniversalController : public GenericHID,
-                              public frc::Sendable,
-                              public frc::SendableHelper<UniversalController>
+                              public wpi::Sendable,
+                              public wpi::SendableHelper<UniversalController>
   {
   public:
     explicit UniversalController(int port);
@@ -42,19 +42,35 @@ namespace frc
       kPS4,
       kStadia,
     };
+
+
+
     void SetControllerType(ControllerType type);
 
-    double GetX(JoystickHand hand) const override;
-    double GetY(JoystickHand hand) const override;
-    double GetTriggerAxis(JoystickHand hand) const;
+    double GetLeftX() const;
+    double GetLeftY() const;
+    double GetLeftTriggerAxis() const;
 
-    bool GetBumper(JoystickHand hand) const;
-    bool GetBumperPressed(JoystickHand hand);
-    bool GetBumperReleased(JoystickHand hand);
+    double GetRightX() const;
+    double GetRightY() const;
+    double GetRightTriggerAxis() const;
 
-    bool GetStickButton(JoystickHand hand) const;
-    bool GetStickButtonPressed(JoystickHand hand);
-    bool GetStickButtonReleased(JoystickHand hand);
+    bool GetLeftBumper() const;
+    bool GetLeftBumperPressed();
+    bool GetLeftBumperReleased();
+
+    bool GetRightBumper() const;
+    bool GetRightBumperPressed();
+    bool GetRightBumperReleased();
+
+    bool GetLeftStickButton() const;
+    bool GetLeftStickButtonPressed();
+    bool GetLeftStickButtonReleased();
+
+    bool GetRightStickButton() const;
+    bool GetRightStickButtonPressed();
+    bool GetRightStickButtonReleased();
+
 
     bool GetCrossButton() const;
     bool GetCrossButtonPressed();
@@ -94,7 +110,7 @@ namespace frc
     bool GetLeftButton() const;
 
     // SmartDash Support
-    void InitSendable(frc::SendableBuilder &builder) override;
+    void InitSendable(wpi::SendableBuilder &builder) override;
 
   private:
     ControllerType m_type = ControllerType::kPS4;

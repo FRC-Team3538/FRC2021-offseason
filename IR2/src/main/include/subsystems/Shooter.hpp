@@ -39,7 +39,7 @@
 #include <units/math.h>
 
 // Utilities
-#include "lib/LazyTalonFX.hpp"
+#include <ctre/Phoenix.h>
 #include "subsystems/Subsystem.hpp"
 #include <frc/Servo.h>
 #include <frc/DutyCycleEncoder.h>
@@ -103,14 +103,14 @@ private:
     
     double kScaleFactorTurret = 332.0 / ((555.0 / 11.0) * 2048.0); // Degrees / (Ratio * Ticks per Rev)
 
-    LazyTalonFX feeder{10};
-    LazyTalonFX turret{11};
-    LazyTalonFX shooterA{12};
-    LazyTalonFX shooterB{13};
+    WPI_TalonFX feeder{10};
+    WPI_TalonFX turret{11};
+    WPI_TalonFX shooterA{12};
+    WPI_TalonFX shooterB{13};
 
     frc::Servo hoodA{0};
 
-    frc::Solenoid feederSol{2};
+    frc::Solenoid feederSol{frc::PneumaticsModuleType::CTREPCM, 2};
 
     frc::DutyCycleEncoder hoodEncAbs{0};
     frc::DutyCycleEncoder turretEncAbs{1};

@@ -1,7 +1,7 @@
 #include "auto/AutoShootNScoot.hpp"
 
 #include <frc/Filesystem.h>
-#include <wpi/Path.h>
+#include <wpi/fs.h>
 #include <wpi/SmallString.h>
 
 // Name for Smart Dash Chooser
@@ -42,13 +42,11 @@ void AutoShootNScoot::Init()
     std::vector<frc::Spline<5>::ControlVector> p1;
 
     {
-        wpi::SmallString<256> filePath;
-        frc::filesystem::GetDeployDirectory(filePath);
-        wpi::sys::path::append(filePath, "PathWeaver");
-        wpi::sys::path::append(filePath, "Paths");
-        wpi::sys::path::append(filePath, "Line.path");
+        std::string filePath = frc::filesystem::GetDeployDirectory();
+        filePath = fs::path{filePath}.append("PathWeaver").append("Paths").append("Line.path").c_str();
+        
 
-        io::CSVReader<6> csv(filePath.c_str());
+        io::CSVReader<6> csv(filePath);
         csv.read_header(io::ignore_extra_column | io::ignore_missing_column, "X", "Y", "Tangent X", "Tangent Y", "ddx", "ddy");
         double x, y, dx, dy, ddx = 0, ddy = 0;
         while (csv.read_row(x, y, dx, dy, ddx, ddy))

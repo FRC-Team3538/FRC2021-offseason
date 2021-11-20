@@ -15,7 +15,7 @@ public:
     Intake intake;
     Shooter shooter;
     Climber climber;
-    frc::Compressor compressor;
+    frc::Compressor compressor{frc::PneumaticsModuleType::CTREPCM};
     Spindexer spindexer;
 
     //vision::RJVisionPipeline vis;

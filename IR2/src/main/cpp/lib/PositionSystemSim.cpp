@@ -45,5 +45,5 @@ units::ampere_t PositionSystemSim::GetCurrentDraw() const
 
 void PositionSystemSim::SetInputVoltage(units::volt_t voltage)
 {
-  SetInput(frc::MakeMatrix<1, 1>(voltage.to<double>()));
+  SetInput(Eigen::Matrix<double, 1, 1>(voltage.to<double>()));
 }

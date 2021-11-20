@@ -27,17 +27,29 @@ class StadiaController : public GenericHID {
   StadiaController(const StadiaController&) = delete;
   StadiaController& operator=(const StadiaController&) = delete;
 
-  double GetX(JoystickHand hand) const override;
-  double GetY(JoystickHand hand) const override;
-  double GetTriggerAxis(JoystickHand hand) const;
+  double GetLeftX() const;
+  double GetLeftY() const;
+  double GetLeftTriggerAxis() const;
 
-  bool GetBumper(JoystickHand hand) const;
-  bool GetBumperPressed(JoystickHand hand);
-  bool GetBumperReleased(JoystickHand hand);
+  double GetRightX() const;
+  double GetRightY() const;
+  double GetRightTriggerAxis() const;
 
-  bool GetStickButton(JoystickHand hand) const;
-  bool GetStickButtonPressed(JoystickHand hand);
-  bool GetStickButtonReleased(JoystickHand hand);
+  bool GetLeftBumper() const;
+  bool GetLeftBumperPressed();
+  bool GetLeftBumperReleased();
+
+  bool GetRightBumper() const;
+  bool GetRightBumperPressed();
+  bool GetRightBumperReleased();
+
+  bool GetLeftStickButton() const;
+  bool GetLeftStickButtonPressed();
+  bool GetLeftStickButtonReleased();
+
+  bool GetRightStickButton() const;
+  bool GetRightStickButtonPressed();
+  bool GetRightStickButtonReleased();
 
   bool GetAButton() const;
   bool GetAButtonPressed();

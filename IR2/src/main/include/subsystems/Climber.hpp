@@ -1,7 +1,7 @@
 #pragma once
 
 // Utilities
-#include "lib/LazyTalonFX.hpp"
+#include <ctre/Phoenix.h>
 #include "subsystems/Subsystem.hpp"
 #include <frc/Solenoid.h>
 #include <cmath>
@@ -33,8 +33,8 @@ public:
     State GetClimberPosition();
 
 private:
-    LazyTalonFX climb{14};
+    WPI_TalonFX climb{14};
 
-    frc::Solenoid climbPiston{1};
-    // frc::Solenoid climbLock{2};
+    frc::Solenoid climbPiston{frc::PneumaticsModuleType::CTREPCM, 1};
+    // frc::Solenoid climbLock{frc::PneumaticsModuleType::CTREPCM, 2};
 };

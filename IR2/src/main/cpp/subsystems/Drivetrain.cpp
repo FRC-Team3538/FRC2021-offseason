@@ -3,9 +3,7 @@
 Drivetrain::Drivetrain()
 {
 #ifdef __FRC_ROBORIO__
-  m_imu.Calibrate();
-
-  //alt_imu.ConfigFactoryDefault();
+  // m_imu.Calibrate();
 #endif
   ResetYaw();
 
@@ -137,9 +135,7 @@ void Drivetrain::Test(double y, double x)
 frc::Rotation2d Drivetrain::GetYaw()
 {
 #ifdef __FRC_ROBORIO__
-  double ypr[3];
-  //alt_imu.GetYawPitchRoll(ypr);
-  return frc::Rotation2d{units::degree_t{m_imu.GetAngle()}};
+  return frc::Rotation2d{units::degree_t{0}}; //m_imu.GetAngle()}};
 
 #else
   return m_theta;
@@ -174,7 +170,7 @@ void Drivetrain::ResetYaw()
 {
 
 #ifdef __FRC_ROBORIO__
-  m_imu.Reset();
+  //m_imu.Reset();
 #else
   // The ADI gyro is not simulator compatible on linux
   m_theta = 0_rad;
@@ -197,7 +193,7 @@ units::radians_per_second_t Drivetrain::GetYawRate()
   return units::degrees_per_second_t(m_robotVelocity.omega);
 }
 
-void Drivetrain::InitSendable(frc::SendableBuilder &builder)
+void Drivetrain::InitSendable(nt::NTSendableBuilder &builder)
 {
   builder.SetSmartDashboardType("DriveBase");
   builder.SetActuator(true);
@@ -210,10 +206,7 @@ void Drivetrain::InitSendable(frc::SendableBuilder &builder)
 
   // m_yawLockPID.InitSendable(builder);
 
-  builder.AddDoubleProperty("gyro", [this] { return m_imu.GetAngle(); }, nullptr);
-  //builder.AddDoubleProperty("pigeon/yaw", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[0]; }, nullptr);
-  //builder.AddDoubleProperty("pigeon/pitch", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[1]; }, nullptr);
-  //builder.AddDoubleProperty("pigeon/roll", [this] { double ypr[3]; alt_imu.GetYawPitchRoll(ypr); return ypr[2]; }, nullptr);
+  builder.AddDoubleProperty("gyro", [this] { return 0; }, nullptr); //m_imu.GetAngle(); }, nullptr);
   
   // Pose
   builder.AddDoubleProperty(
