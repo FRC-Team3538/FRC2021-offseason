@@ -3,7 +3,7 @@
 Drivetrain::Drivetrain()
 {
 #ifdef __FRC_ROBORIO__
-  // m_imu.Calibrate();
+  m_imu.ConfigFactoryDefault();
 #endif
   ResetYaw();
 
@@ -135,7 +135,20 @@ void Drivetrain::Test(double y, double x)
 frc::Rotation2d Drivetrain::GetYaw()
 {
 #ifdef __FRC_ROBORIO__
-  return frc::Rotation2d{units::degree_t{0}}; //m_imu.GetAngle()}};
+  double heading = m_imu.GetFusedHeading();
+  if (heading > 180)
+  {
+    while (heading > 180)
+      heading -= 360;
+  }
+
+  if(heading < -180)
+  {
+    while (heading < -180)
+      heading += 360;
+  }
+
+  return frc::Rotation2d{units::degree_t{heading}}; //m_imu.GetAngle()}};
 
 #else
   return m_theta;
@@ -171,6 +184,7 @@ void Drivetrain::ResetYaw()
 
 #ifdef __FRC_ROBORIO__
   //m_imu.Reset();
+  m_imu.SetFusedHeading(0.0);
 #else
   // The ADI gyro is not simulator compatible on linux
   m_theta = 0_rad;
@@ -206,53 +220,93 @@ void Drivetrain::InitSendable(nt::NTSendableBuilder &builder)
 
   // m_yawLockPID.InitSendable(builder);
 
-  builder.AddDoubleProperty("gyro", [this] { return 0; }, nullptr); //m_imu.GetAngle(); }, nullptr);
-  
+  builder.AddDoubleProperty(
+      "gyro", [this]
+      { return 0; },
+      nullptr); //m_imu.GetAngle(); }, nullptr);
+
   // Pose
   builder.AddDoubleProperty(
-      "poseEstimator/x", [this] { return m_poseEstimator.GetEstimatedPosition().X().value(); }, nullptr);
+      "poseEstimator/x", [this]
+      { return m_poseEstimator.GetEstimatedPosition().X().value(); },
+      nullptr);
   builder.AddDoubleProperty(
-      "poseEstimator/y", [this] { return m_poseEstimator.GetEstimatedPosition().Y().value(); }, nullptr);
+      "poseEstimator/y", [this]
+      { return m_poseEstimator.GetEstimatedPosition().Y().value(); },
+      nullptr);
   builder.AddDoubleProperty(
-      "poseEstimator/yaw", [this] { return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees().value(); }, nullptr);
+      "poseEstimator/yaw", [this]
+      { return m_poseEstimator.GetEstimatedPosition().Rotation().Degrees().value(); },
+      nullptr);
 
   builder.AddDoubleProperty(
-      "odometry/x", [this] { return m_odometry.GetPose().X().value(); }, nullptr);
+      "odometry/x", [this]
+      { return m_odometry.GetPose().X().value(); },
+      nullptr);
   builder.AddDoubleProperty(
-      "odometry/y", [this] { return m_odometry.GetPose().Y().value(); }, nullptr);
+      "odometry/y", [this]
+      { return m_odometry.GetPose().Y().value(); },
+      nullptr);
   builder.AddDoubleProperty(
-      "odometry/yaw", [this] { return m_odometry.GetPose().Rotation().Degrees().value(); }, nullptr);
+      "odometry/yaw", [this]
+      { return m_odometry.GetPose().Rotation().Degrees().value(); },
+      nullptr);
 
   // Velocity
   builder.AddDoubleProperty(
-      "vel/x", [this] { return m_robotVelocity.vx.value(); }, nullptr);
+      "vel/x", [this]
+      { return m_robotVelocity.vx.value(); },
+      nullptr);
   builder.AddDoubleProperty(
-      "vel/y", [this] { return m_robotVelocity.vy.value(); }, nullptr);
+      "vel/y", [this]
+      { return m_robotVelocity.vy.value(); },
+      nullptr);
   builder.AddDoubleProperty(
-      "vel/yaw", [this] { return units::degrees_per_second_t(m_robotVelocity.omega).value(); }, nullptr);
+      "vel/yaw", [this]
+      { return units::degrees_per_second_t(m_robotVelocity.omega).value(); },
+      nullptr);
 
   // Command
   builder.AddDoubleProperty(
-      "cmd/x", [this] { return m_command.vx.value(); }, nullptr);
+      "cmd/x", [this]
+      { return m_command.vx.value(); },
+      nullptr);
   builder.AddDoubleProperty(
-      "cmd/y", [this] { return m_command.vy.value(); }, nullptr);
+      "cmd/y", [this]
+      { return m_command.vy.value(); },
+      nullptr);
   builder.AddDoubleProperty(
-      "cmd/yaw", [this] { return units::degrees_per_second_t(m_command.omega).value(); }, nullptr);
+      "cmd/yaw", [this]
+      { return units::degrees_per_second_t(m_command.omega).value(); },
+      nullptr);
 
   // Heading Lock
   builder.AddDoubleProperty(
-      "YawPID/kP", [this] { return m_yawLockPID.GetP(); }, [this](double value) { m_yawLockPID.SetP(value); });
+      "YawPID/kP", [this]
+      { return m_yawLockPID.GetP(); },
+      [this](double value)
+      { m_yawLockPID.SetP(value); });
   builder.AddDoubleProperty(
-      "YawPID/kI", [this] { return m_yawLockPID.GetI(); }, [this](double value) { m_yawLockPID.SetI(value); });
+      "YawPID/kI", [this]
+      { return m_yawLockPID.GetI(); },
+      [this](double value)
+      { m_yawLockPID.SetI(value); });
   builder.AddDoubleProperty(
-      "YawPID/kD", [this] { return m_yawLockPID.GetD(); }, [this](double value) { m_yawLockPID.SetD(value); });
+      "YawPID/kD", [this]
+      { return m_yawLockPID.GetD(); },
+      [this](double value)
+      { m_yawLockPID.SetD(value); });
   builder.AddDoubleProperty(
       "YawPID/SP",
-      [this] { return units::degree_t(m_yawLockPID.GetSetpoint()).value(); }, nullptr);
+      [this]
+      { return units::degree_t(m_yawLockPID.GetSetpoint()).value(); },
+      nullptr);
 
   // Operating Mode
   builder.AddBooleanProperty(
-      "cmd/fieldRelative", [this] { return m_fieldRelative; }, nullptr);
+      "cmd/fieldRelative", [this]
+      { return m_fieldRelative; },
+      nullptr);
 }
 
 void Drivetrain::SimPeriodic()

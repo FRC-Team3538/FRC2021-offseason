@@ -94,10 +94,11 @@ void Robot::TeleopPeriodic()
 
     // INTAKE CODE
     double Trianglebutton = m_driver.GetTriangleButton();
+
     double leftTrig = smooth_deadband(m_driver.GetLeftTriggerAxis(), deadbandVal, 1.0);
     double rightTrigop = smooth_deadband(m_operator.GetRightTriggerAxis(), deadbandVal, 1.0);
     double leftTrigop = smooth_deadband(m_operator.GetLeftTriggerAxis(), deadbandVal, 1.0);
-    double intakeSpd = leftTrig - Trianglebutton - leftTrigop + rightTrigop;
+    double intakeSpd = rightTrigop - leftTrigop; //leftTrig - Trianglebutton - leftTrigop + rightTrigop;
     IO.intake.SetSpeed(intakeSpd);
 
     //Deploying and Retracting I
@@ -117,7 +118,8 @@ void Robot::TeleopPeriodic()
     }
 
     //Spindexer
-    bool shoot = m_driver.GetRightTriggerAxis() || m_operator.GetTriangleButton();
+    bool shoot = (m_driver.GetRightTriggerAxis() > 0.1) || m_operator.GetTriangleButton();
+    std::cout << shoot << std::endl;
     double spindexer = smooth_deadband(m_operator.GetLeftX(), deadbandVal, 1.0);
     if (m_driver.GetCircleButton())
     {

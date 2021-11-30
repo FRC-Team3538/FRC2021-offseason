@@ -11,7 +11,6 @@
 #include <frc/controller/HolonomicDriveController.h>
 #include "Subsystem.hpp"
 #include <frc/geometry/Translation2d.h>
-#include "lib/adi/ADIS16470_IMU.h"
 #include <cmath>
 #include <networktables/NTSendable.h>
 #include <networktables/NTSendableBuilder.h>
@@ -71,10 +70,7 @@ private:
 
     
 #ifdef __FRC_ROBORIO__
-    // frc::ADIS16470_IMU m_imu{
-    //     frc::ADIS16470_IMU::IMUAxis::kZ,
-    //     frc::SPI::Port::kOnboardCS0,
-    //     frc::ADIS16470CalibrationTime::_1s};
+    PigeonIMU m_imu{30};
 
 #else
     // The ADI gyro is not simulator compatible on linux
@@ -113,7 +109,7 @@ private:
          0.004_V / 1_rad_per_s_sq}};
 
     static constexpr SwerveModuleConfig m_frontRightConfig{
-        units::degree_t(75.938),
+        units::degree_t(-197.992),
         {1.89,
          0.0,
          0.0,
