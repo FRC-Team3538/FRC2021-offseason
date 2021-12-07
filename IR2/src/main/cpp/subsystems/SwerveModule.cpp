@@ -81,8 +81,8 @@ SwerveModule::SwerveModule(std::string moduleID, int driveMotorChannel, int turn
 
   // Limit the PID Controller's input range between -pi and pi and set the input
   // to be continuous.
-  m_turningPIDController.EnableContinuousInput(-units::radian_t(wpi::math::pi),
-                                               units::radian_t(wpi::math::pi));
+  m_turningPIDController.EnableContinuousInput(-units::radian_t(wpi::numbers::pi),
+                                               units::radian_t(wpi::numbers::pi));
   m_turningPIDController.Reset(units::degree_t(turningEncAbs.GetAbsolutePosition()));
 }
 
@@ -203,12 +203,12 @@ void SwerveModule::UpdateTelemetry()
 {
 }
 
-void SwerveModule::InitSendable(frc::SendableBuilder &builder)
+void SwerveModule::InitSendable(nt::NTSendableBuilder &builder)
 {
   InitSendable(builder, "");
 }
 
-void SwerveModule::InitSendable(frc::SendableBuilder &builder, std::string name)
+void SwerveModule::InitSendable(nt::NTSendableBuilder &builder, std::string name)
 {
   builder.SetSmartDashboardType("SwerveModule");
   builder.SetActuator(true);

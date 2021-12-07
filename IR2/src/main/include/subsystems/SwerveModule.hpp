@@ -11,16 +11,18 @@
 
 // Utilities
 #include <cmath>
-#include "lib/LazyTalonFX.hpp"
+#include <ctre/Phoenix.h>
 #include <frc/kinematics/SwerveModuleState.h>
 #include "Subsystem.hpp"
 #include <frc/Timer.h>
-#include <frc/Preferences.h>
+// #include <frc/Preferences.h>
 #include <string.h>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/controller/SimpleMotorFeedforward.h>
 #include <iostream>
+#include <networktables/NTSendable.h>
+#include <networktables/NTSendableBuilder.h>
 
 // Simulation
 #include <frc/system/plant/LinearSystemId.h>
@@ -69,8 +71,8 @@ struct SwerveModuleConfig
 };
 
 class SwerveModule : public Subsystem, 
-                     public frc::Sendable,
-                     public frc::SendableHelper<SwerveModule>
+                     public nt::NTSendable,
+                     public wpi::SendableHelper<SwerveModule>
 {
 public:
     SwerveModule(std::string moduleID, int driveMotorChannel, int turningMotorChannel, int turningEncoderChannel, SwerveModuleConfig config);
@@ -92,8 +94,8 @@ public:
     void Stop();
 
     // Telemetry / Smartdash
-    void InitSendable(frc::SendableBuilder &builder) override;
-    void InitSendable(frc::SendableBuilder &builder, std::string name);
+    void InitSendable(nt::NTSendableBuilder &builder) override;
+    void InitSendable(nt::NTSendableBuilder &builder, std::string name);
 
     // Simulation
     void SimPeriodic();
@@ -106,8 +108,8 @@ private:
     std::string moduleID;
 
     // Hardware
-    LazyTalonFX m_driveMotor;
-    LazyTalonFX m_turningMotor;
+    WPI_TalonFX m_driveMotor;
+    WPI_TalonFX m_turningMotor;
     CANCoder turningEncAbs;
 
     // Configuration
@@ -117,7 +119,7 @@ private:
     static constexpr double kTurnGearboxRatio = 12.8;
 
     static constexpr auto kDriveScaleFactor =
-        (2 * wpi::math::pi * kWheelRadius) / (kDriveGearboxRatio * kEncoderResolution);
+        (2 * wpi::numbers::pi * kWheelRadius) / (kDriveGearboxRatio * kEncoderResolution);
 
     static constexpr auto kTurningMotorVoltageNominal = 12.8_V;
 
@@ -132,7 +134,7 @@ private:
     frc::SimpleMotorFeedforward<units::radians> m_turnFeedforward;
 
     // Preferences
-    frc::Preferences *prefs = frc::Preferences::GetInstance();
+    // frc::Preferences *prefs = frc::Preferences::GetInstance();
 
 
     //

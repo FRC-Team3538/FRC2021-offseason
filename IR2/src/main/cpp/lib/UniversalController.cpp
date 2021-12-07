@@ -42,16 +42,16 @@ void UniversalController::SetControllerType(ControllerType type)
  *
  * @param hand Side of controller whose value should be returned.
  */
-double UniversalController::GetX(JoystickHand hand) const
+double UniversalController::GetLeftX() const
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetX(hand);
+    return xb_.GetLeftX();
   case ControllerType::kPS4:
-    return ps_.GetX(hand);
+    return ps_.GetLeftX();
   case ControllerType::kStadia:
-    return stadia_.GetX(hand);
+    return stadia_.GetLeftX();
   default:
     return 0.0;
   }
@@ -62,16 +62,16 @@ double UniversalController::GetX(JoystickHand hand) const
  *
  * @param hand Side of controller whose value should be returned.
  */
-double UniversalController::GetY(JoystickHand hand) const
+double UniversalController::GetLeftY() const
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetY(hand);
+    return xb_.GetLeftY();
   case ControllerType::kPS4:
-    return ps_.GetY(hand);
+    return ps_.GetLeftY();
   case ControllerType::kStadia:
-    return stadia_.GetY(hand);
+    return stadia_.GetLeftY();
   default:
     return 0.0;
   }
@@ -82,16 +82,76 @@ double UniversalController::GetY(JoystickHand hand) const
  *
  * @param hand Side of controller whose value should be returned.
  */
-double UniversalController::GetTriggerAxis(JoystickHand hand) const
+double UniversalController::GetLeftTriggerAxis() const
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetTriggerAxis(hand);
+    return xb_.GetLeftTriggerAxis();
   case ControllerType::kPS4:
-    return ps_.GetTriggerAxis(hand);
+    return ps_.GetL2Axis();
   case ControllerType::kStadia:
-    return stadia_.GetTriggerAxis(hand);
+    return stadia_.GetLeftTriggerAxis();
+  default:
+    return 0.0;
+  }
+}
+
+/**
+ * Get the X axis value of the controller.GenericHID::JoystickHand::kLeftHand
+ *
+ * @param hand Side of controller whose value should be returned.
+ */
+double UniversalController::GetRightX() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightX();
+  case ControllerType::kPS4:
+    return ps_.GetRightX();
+  case ControllerType::kStadia:
+    return stadia_.GetRightX();
+  default:
+    return 0.0;
+  }
+}
+
+/**
+ * Get the Y axis value of the controller.
+ *
+ * @param hand Side of controller whose value should be returned.
+ */
+double UniversalController::GetRightY() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightY();
+  case ControllerType::kPS4:
+    return ps_.GetRightY();
+  case ControllerType::kStadia:
+    return stadia_.GetRightY();
+  default:
+    return 0.0;
+  }
+}
+
+/**
+ * Get the trigger axis value of the controller.
+ *
+ * @param hand Side of controller whose value should be returned.
+ */
+double UniversalController::GetRightTriggerAxis() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightTriggerAxis();
+  case ControllerType::kPS4:
+    return ps_.GetR2Axis();
+  case ControllerType::kStadia:
+    return stadia_.GetRightTriggerAxis();
   default:
     return 0.0;
   }
@@ -102,16 +162,16 @@ double UniversalController::GetTriggerAxis(JoystickHand hand) const
  *
  * @param hand Side of controller whose value should be returned.
  */
-bool UniversalController::GetBumper(JoystickHand hand) const
+bool UniversalController::GetLeftBumper() const
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetBumper(hand);
+    return xb_.GetLeftBumper();
   case ControllerType::kPS4:
-    return ps_.GetBumper(hand);
+    return ps_.GetL1Button();
   case ControllerType::kStadia:
-    return stadia_.GetBumper(hand);
+    return stadia_.GetLeftBumper();
   default:
     return false;
   }
@@ -123,16 +183,16 @@ bool UniversalController::GetBumper(JoystickHand hand) const
  * @param hand Side of controller whose value should be returned.
  * @return Whether the button was pressed since the last check.
  */
-bool UniversalController::GetBumperPressed(JoystickHand hand)
+bool UniversalController::GetLeftBumperPressed()
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetBumperPressed(hand);
+    return xb_.GetLeftBumperPressed();
   case ControllerType::kPS4:
-    return ps_.GetBumperPressed(hand);
+    return ps_.GetL1ButtonPressed();
   case ControllerType::kStadia:
-    return stadia_.GetBumperPressed(hand);
+    return stadia_.GetLeftBumperPressed();
   default:
     return false;
   }
@@ -144,16 +204,78 @@ bool UniversalController::GetBumperPressed(JoystickHand hand)
  * @param hand Side of controller whose value should be returned.
  * @return Whether the button was released since the last check.
  */
-bool UniversalController::GetBumperReleased(JoystickHand hand)
+bool UniversalController::GetLeftBumperReleased()
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetBumperReleased(hand);
+    return xb_.GetLeftBumperReleased();
   case ControllerType::kPS4:
-    return ps_.GetBumperReleased(hand);
+    return ps_.GetL1ButtonReleased();
   case ControllerType::kStadia:
-    return stadia_.GetBumperReleased(hand);
+    return stadia_.GetLeftBumperReleased();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Read the value of the bumper button on the controller.
+ *
+ * @param hand Side of controller whose value should be returned.
+ */
+bool UniversalController::GetRightBumper() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightBumper();
+  case ControllerType::kPS4:
+    return ps_.GetR1Button();
+  case ControllerType::kStadia:
+    return stadia_.GetRightBumper();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Whether the bumper was pressed since the last check.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return Whether the button was pressed since the last check.
+ */
+bool UniversalController::GetRightBumperPressed()
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightBumperPressed();
+  case ControllerType::kPS4:
+    return ps_.GetR1ButtonPressed();
+  case ControllerType::kStadia:
+    return stadia_.GetRightBumperPressed();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Whether the bumper was released since the last check.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return Whether the button was released since the last check.
+ */
+bool UniversalController::GetRightBumperReleased()
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightBumperReleased();
+  case ControllerType::kPS4:
+    return ps_.GetR1ButtonReleased();
+  case ControllerType::kStadia:
+    return stadia_.GetRightBumperReleased();
   default:
     return false;
   }
@@ -165,16 +287,16 @@ bool UniversalController::GetBumperReleased(JoystickHand hand)
  * @param hand Side of controller whose value should be returned.
  * @return The state of the button.
  */
-bool UniversalController::GetStickButton(JoystickHand hand) const
+bool UniversalController::GetLeftStickButton() const
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetStickButton(hand);
+    return xb_.GetLeftStickButton();
   case ControllerType::kPS4:
-    return ps_.GetStickButton(hand);
+    return ps_.GetL3Button();
   case ControllerType::kStadia:
-    return stadia_.GetStickButton(hand);
+    return stadia_.GetLeftStickButton();
   default:
     return false;
   }
@@ -186,16 +308,16 @@ bool UniversalController::GetStickButton(JoystickHand hand) const
  * @param hand Side of controller whose value should be returned.
  * @return Whether the button was pressed since the last check.
  */
-bool UniversalController::GetStickButtonPressed(JoystickHand hand)
+bool UniversalController::GetLeftStickButtonPressed()
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetStickButtonPressed(hand);
+    return xb_.GetLeftStickButtonPressed();
   case ControllerType::kPS4:
-    return ps_.GetStickButtonPressed(hand);
+    return ps_.GetL3ButtonPressed();
   case ControllerType::kStadia:
-    return stadia_.GetStickButtonPressed(hand);
+    return stadia_.GetLeftStickButtonPressed();
   default:
     return false;
   }
@@ -207,16 +329,79 @@ bool UniversalController::GetStickButtonPressed(JoystickHand hand)
  * @param hand Side of controller whose value should be returned.
  * @return Whether the button was released since the last check.
  */
-bool UniversalController::GetStickButtonReleased(JoystickHand hand)
+bool UniversalController::GetLeftStickButtonReleased()
 {
   switch (m_type)
   {
   case ControllerType::kXbox:
-    return xb_.GetStickButtonReleased(hand);
+    return xb_.GetLeftStickButtonReleased();
   case ControllerType::kPS4:
-    return ps_.GetStickButtonReleased(hand);
+    return ps_.GetL3ButtonReleased();
   case ControllerType::kStadia:
-    return stadia_.GetStickButtonReleased(hand);
+    return stadia_.GetLeftStickButtonReleased();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Read the value of the stick button on the controller.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return The state of the button.
+ */
+bool UniversalController::GetRightStickButton() const
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightStickButton();
+  case ControllerType::kPS4:
+    return ps_.GetR3Button();
+  case ControllerType::kStadia:
+    return stadia_.GetRightStickButton();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Whether the stick button was pressed since the last check.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return Whether the button was pressed since the last check.
+ */
+bool UniversalController::GetRightStickButtonPressed()
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightStickButtonPressed();
+  case ControllerType::kPS4:
+    return ps_.GetR3ButtonPressed();
+  case ControllerType::kStadia:
+    return stadia_.GetRightStickButtonPressed();
+  default:
+    return false;
+  }
+}
+
+/**
+ * Whether the stick button was released since the last check.
+ *
+ * @param hand Side of controller whose value should be returned.
+ * @return Whether the button was released since the last check.
+ */
+bool UniversalController::GetRightStickButtonReleased()
+{
+  switch (m_type)
+  {
+  case ControllerType::kXbox:
+    return xb_.GetRightStickButtonReleased();
+  case ControllerType::kPS4:
+    return ps_.GetR3ButtonReleased();
+  case ControllerType::kStadia:
+    return stadia_.GetRightStickButtonReleased();
   default:
     return false;
   }
@@ -658,7 +843,7 @@ bool UniversalController::GetTouchPadButton() const
   case ControllerType::kXbox:
     return false;
   case ControllerType::kPS4:
-    return ps_.GetTouchPadButton();
+    return ps_.GetTouchpad();
   case ControllerType::kStadia:
     return stadia_.GetCaptureButton();
   default:
@@ -678,7 +863,7 @@ bool UniversalController::GetTouchPadButtonPressed()
   case ControllerType::kXbox:
     return false;
   case ControllerType::kPS4:
-    return ps_.GetTouchPadButtonPressed();
+    return ps_.GetTouchpadPressed();
   case ControllerType::kStadia:
     return stadia_.GetCaptureButtonPressed();
   default:
@@ -698,7 +883,7 @@ bool UniversalController::GetTouchPadButtonReleased()
   case ControllerType::kXbox:
     return false;
   case ControllerType::kPS4:
-    return ps_.GetTouchPadButtonReleased();
+    return ps_.GetTouchpadReleased();
   case ControllerType::kStadia:
     return stadia_.GetCaptureButtonReleased();
   default:
@@ -758,24 +943,24 @@ bool UniversalController::GetLeftButton() const
  * @param hand Side of controller whose value should be returned.
  * @return The state of the button.
  */
-void UniversalController::InitSendable(frc::SendableBuilder &builder)
+void UniversalController::InitSendable(wpi::SendableBuilder &builder)
 {
   builder.SetSmartDashboardType("UniversalController");
   builder.SetActuator(true);
 
   // Axis
   builder.AddDoubleProperty(
-      "axis/LX", [this] { return GetX(JoystickHand::kLeftHand); }, nullptr);
+      "axis/LX", [this] { return GetLeftX(); }, nullptr);
   builder.AddDoubleProperty(
-      "axis/LY", [this] { return GetY(JoystickHand::kLeftHand); }, nullptr);
+      "axis/LY", [this] { return GetLeftY(); }, nullptr);
   builder.AddDoubleProperty(
-      "axis/LT", [this] { return GetTriggerAxis(JoystickHand::kLeftHand); }, nullptr);
+      "axis/LT", [this] { return GetLeftTriggerAxis(); }, nullptr);
   builder.AddDoubleProperty(
-      "axis/RX", [this] { return GetX(JoystickHand::kRightHand); }, nullptr);
+      "axis/RX", [this] { return GetRightX(); }, nullptr);
   builder.AddDoubleProperty(
-      "axis/RY", [this] { return GetY(JoystickHand::kRightHand); }, nullptr);
+      "axis/RY", [this] { return GetRightY(); }, nullptr);
   builder.AddDoubleProperty(
-      "axis/RT", [this] { return GetTriggerAxis(JoystickHand::kRightHand); }, nullptr);
+      "axis/RT", [this] { return GetRightTriggerAxis(); }, nullptr);
   builder.AddDoubleProperty(
       "axis/POV", [this] { return GetPOV(); }, nullptr);
 
@@ -790,14 +975,14 @@ void UniversalController::InitSendable(frc::SendableBuilder &builder)
       "btn/Triangle", [this] { return GetTriangleButton(); }, nullptr);
 
   builder.AddBooleanProperty(
-      "btn/BumperL", [this] { return GetBumper(JoystickHand::kLeftHand); }, nullptr);
+      "btn/BumperL", [this] { return GetLeftBumper(); }, nullptr);
   builder.AddBooleanProperty(
-      "btn/BumperR", [this] { return GetBumper(JoystickHand::kRightHand); }, nullptr);
+      "btn/BumperR", [this] { return GetRightBumper(); }, nullptr);
 
   builder.AddBooleanProperty(
-      "btn/StickL", [this] { return GetStickButton(JoystickHand::kLeftHand); }, nullptr);
+      "btn/StickL", [this] { return GetLeftStickButton(); }, nullptr);
   builder.AddBooleanProperty(
-      "btn/StickR", [this] { return GetStickButton(JoystickHand::kRightHand); }, nullptr);
+      "btn/StickR", [this] { return GetRightStickButton(); }, nullptr);
 
   builder.AddBooleanProperty(
       "btn/Share", [this] { return GetShareButton(); }, nullptr);
